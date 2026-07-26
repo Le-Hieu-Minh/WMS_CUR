@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../../config/env.js';
 import { ApiError, HttpStatus } from '../../utils/apiError.js';
+import { auditService } from '../audit-log/audit.service.js';
 import { authRepository } from './auth.repository.js';
 
 const MAX_FAILED_ATTEMPTS = 5;
@@ -156,6 +157,17 @@ export const authService = {
 
     const updatedUser = await authRepository.findUserById(user.id);
 
+    await auditService.log({
+      userId: user.id,
+      action: 'LOGIN',
+      module: 'auth',
+      entityType: 'User',
+      entityId: user.id,
+      description: `Đăng nhập: ${normalizedEmail}`,
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
+
     return {
       accessToken,
       refreshToken,
@@ -195,7 +207,7 @@ export const authService = {
     };
   },
 
-  async logout(refreshToken) {
+  async logout(refreshToken, userId = null, meta = {}) {
     const tokenHash = hashToken(refreshToken);
     const tokenRecord = await authRepository.findRefreshToken(tokenHash);
 
@@ -204,6 +216,17 @@ export const authService = {
     }
 
     await authRepository.revokeRefreshToken(tokenHash);
+
+    await auditService.log({
+      userId: userId || tokenRecord.userId,
+      action: 'LOGOUT',
+      module: 'auth',
+      entityType: 'User',
+      entityId: userId || tokenRecord.userId,
+      description: 'Đăng xuất',
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
   },
 
   async getMe(userId) {
@@ -216,7 +239,7 @@ export const authService = {
     return mapUserResponse(user);
   },
 
-  async changePassword(userId, { currentPassword, newPassword }) {
+  async changePassword(userId, { currentPassword, newPassword }, meta = {}) {
     const user = await authRepository.findUserById(userId);
 
     if (!user) {
@@ -236,6 +259,17 @@ export const authService = {
     const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
     await authRepository.updatePassword(userId, passwordHash);
     await authRepository.revokeAllUserTokens(userId);
+
+    await auditService.log({
+      userId,
+      action: 'CHANGE_PASSWORD',
+      module: 'auth',
+      entityType: 'User',
+      entityId: userId,
+      description: 'Đổi mật khẩu',
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
   },
 
   hashToken,

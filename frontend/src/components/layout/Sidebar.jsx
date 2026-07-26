@@ -11,6 +11,12 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Boxes,
+  ClipboardCheck,
+  SlidersHorizontal,
+  BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,14 +24,20 @@ import { env } from '@/config/env';
 import { usePermissions } from '@/hooks/usePermissions';
 
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/', permission: null, sprint: 2 },
+  { label: 'Dashboard', icon: LayoutDashboard, path: '/', permission: 'dashboard:read' },
+  { label: 'Nhập kho', icon: ArrowDownToLine, path: '/goods-receipts', permission: 'goods-receipt:read' },
+  { label: 'Xuất kho', icon: ArrowUpFromLine, path: '/goods-issues', permission: 'goods-issue:read' },
+  { label: 'Tồn kho', icon: Boxes, path: '/inventories', permission: 'inventory:read' },
+  { label: 'Kiểm kê', icon: ClipboardCheck, path: '/stock-takes', permission: 'stock-take:read' },
+  { label: 'Điều chỉnh', icon: SlidersHorizontal, path: '/stock-adjustments', permission: 'stock-adjustment:read' },
+  { label: 'Báo cáo', icon: BarChart3, path: '/reports', permission: 'report:read' },
   { label: 'Sản phẩm', icon: Package, path: '/products', permission: 'product:read' },
   { label: 'Kho hàng', icon: Warehouse, path: '/warehouses', permission: 'warehouse:read' },
   { label: 'Nhà cung cấp', icon: Truck, path: '/suppliers', permission: 'supplier:read' },
   { label: 'Khách hàng', icon: Users, path: '/customers', permission: 'customer:read' },
   { label: 'Người dùng', icon: UserCircle, path: '/users', permission: 'user:read' },
   { label: 'Phân quyền', icon: Shield, path: '/roles', permission: 'role:read' },
-  { label: 'Nhật ký', icon: ClipboardList, path: '/audit-logs', permission: null, sprint: 3 },
+  { label: 'Nhật ký', icon: ClipboardList, path: '/audit-logs', permission: 'audit-log:read' },
   { label: 'Cài đặt', icon: Settings, path: '/settings', permission: null, disabled: true },
 ];
 
@@ -34,7 +46,6 @@ export function Sidebar({ collapsed, onToggle }) {
   const { hasPermission } = usePermissions();
 
   const visibleItems = navItems.filter((item) => {
-    if (item.sprint) return false;
     if (item.disabled) return true;
     if (!item.permission) return true;
     return hasPermission(item.permission);
@@ -62,7 +73,7 @@ export function Sidebar({ collapsed, onToggle }) {
         {visibleItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          const isDisabled = item.disabled || item.sprint;
+          const isDisabled = item.disabled;
 
           return (
             <Link
@@ -85,7 +96,7 @@ export function Sidebar({ collapsed, onToggle }) {
       </nav>
 
       {!collapsed && (
-        <div className="border-t p-4 text-xs text-muted-foreground">Sprint 1 – Master Data & Auth</div>
+        <div className="border-t p-4 text-xs text-muted-foreground">Sprint 3 – Control & Reporting</div>
       )}
     </aside>
   );

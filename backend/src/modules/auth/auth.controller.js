@@ -21,7 +21,10 @@ export const authController = {
 
   logout: asyncHandler(async (req, res) => {
     const { refreshToken } = req.body;
-    await authService.logout(refreshToken);
+    await authService.logout(refreshToken, req.user?.sub, {
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent'),
+    });
     successResponse(res, null, 'Đăng xuất thành công');
   }),
 
@@ -32,7 +35,11 @@ export const authController = {
 
   changePassword: asyncHandler(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-    await authService.changePassword(req.user.sub, { currentPassword, newPassword });
+    await authService.changePassword(
+      req.user.sub,
+      { currentPassword, newPassword },
+      { ipAddress: req.ip, userAgent: req.get('user-agent') }
+    );
     successResponse(res, null, 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.');
   }),
 };

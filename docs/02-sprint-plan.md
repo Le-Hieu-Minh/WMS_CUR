@@ -21,32 +21,32 @@
 
 ## Sprint 2 – Inventory Operations
 
-| Module | Mô tả |
-|--------|--------|
-| Goods Receipt | Nhập kho |
-| Goods Issue | Xuất kho |
-| Inventory | Tồn kho |
-| Dashboard | KPI + biểu đồ |
+| # | Module | Phân tích | Code | Test | Docs |
+|---|--------|-----------|------|------|------|
+| 1 | [Goods Receipt](./modules/goods-receipt/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 2 | [Goods Issue](./modules/goods-issue/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 3 | [Inventory](./modules/inventory/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 4 | [Dashboard](./modules/dashboard/README.md) | ✅ | ✅ | ✅ | ✅ |
 
-## Sprint 3 – Control & Reporting
+> Sprint 2 hoàn thành.
 
-| Module | Mô tả |
-|--------|--------|
-| Stock Take | Kiểm kê |
-| Stock Adjustment | Điều chỉnh tồn |
-| Report | Báo cáo + Excel/PDF |
-| Audit Log | Nhật ký hoạt động |
-| Docs / Test / Deploy | Hoàn thiện |
+## Sprint 3 – Control & Reporting ✅ Code xong (chưa Deploy)
 
-## Dashboard (Sprint 2) – phạm vi
+Tổng quan: [docs/sprint-3/README.md](./sprint-3/README.md)
 
-- Tổng sản phẩm, kho, tồn kho, giá trị tồn
-- Phiếu nhập/xuất hôm nay
-- Hàng sắp hết
-- Top nhập/xuất
-- Biểu đồ nhập/xuất theo tháng
+| # | Module | Phân tích | Code | Test | Docs |
+|---|--------|-----------|------|------|------|
+| 1 | [Stock Take](./modules/stock-take/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 2 | [Stock Adjustment](./modules/stock-adjustment/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 3 | [Audit Log](./modules/audit-log/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 4 | [Report](./modules/report/README.md) | ✅ | ✅ | ✅ | ✅ |
+| 5 | [Docs / Test / Deploy](./sprint-3/deploy.md) | ✅ | ⏳ | ⏳ | ✅ |
 
-## Báo cáo (Sprint 3) – phạm vi
+### Thứ tự code khuyến nghị
+
+Stock Take → Stock Adjustment → Audit Log → Report → ~~Deploy~~ (để sau)
+
+### Báo cáo (Sprint 3) – phạm vi
 
 - Tồn kho, nhập, xuất, kiểm kê, điều chỉnh, giá trị tồn
 - Xuất Excel / PDF

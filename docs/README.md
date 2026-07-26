@@ -24,6 +24,15 @@ Bộ tài liệu tổng hợp cho dự án **Warehouse Management System (WMS)**
 | Product | ✅ Đã triển khai | [modules/product](./modules/product/README.md) |
 | Supplier | ✅ Đã triển khai | [modules/supplier](./modules/supplier/README.md) |
 | Customer | ✅ Đã triển khai | [modules/customer](./modules/customer/README.md) |
+| Goods Receipt | ✅ Đã triển khai | [modules/goods-receipt](./modules/goods-receipt/README.md) |
+| Goods Issue | ✅ Đã triển khai | [modules/goods-issue](./modules/goods-issue/README.md) |
+| Inventory | ✅ Đã triển khai | [modules/inventory](./modules/inventory/README.md) |
+| Dashboard | ✅ Đã triển khai | [modules/dashboard](./modules/dashboard/README.md) |
+| Stock Take | ✅ Đã triển khai | [modules/stock-take](./modules/stock-take/README.md) |
+| Stock Adjustment | ✅ Đã triển khai | [modules/stock-adjustment](./modules/stock-adjustment/README.md) |
+| Audit Log | ✅ Đã triển khai | [modules/audit-log](./modules/audit-log/README.md) |
+| Report | ✅ Đã triển khai | [modules/report](./modules/report/README.md) |
+| Sprint 3 Overview | ✅ Code xong (chưa Deploy) | [sprint-3](./sprint-3/README.md) |
 
 ## Cấu trúc thư mục docs
 
