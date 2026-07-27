@@ -2,19 +2,30 @@
   "name": "wms",
   "version": "1.0.0",
   "private": true,
-  "description": "Warehouse Management System",
+  "description": "Warehouse Management System – monorepo (backend + frontend)",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "npm run dev --prefix backend",
-    "dev:frontend": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix frontend",
-    "start": "npm run start --prefix backend",
-    "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend",
-    "db:generate": "npm run db:generate --prefix backend",
-    "db:migrate": "npm run db:migrate --prefix backend",
-    "db:push": "npm run db:push --prefix backend",
-    "db:studio": "npm run db:studio --prefix backend",
-    "db:seed": "npm run db:seed --prefix backend"
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev -w wms-backend\" \"npm run dev -w wms-frontend\"",
+    "dev:backend": "npm run dev -w wms-backend",
+    "dev:frontend": "npm run dev -w wms-frontend",
+    "build": "npm run build -w wms-frontend",
+    "start": "npm run start -w wms-backend",
+    "test": "npm run test -w wms-backend && npm run test -w wms-frontend",
+    "test:backend": "npm run test -w wms-backend",
+    "test:frontend": "npm run test -w wms-frontend",
+    "db:generate": "npm run db:generate -w wms-backend",
+    "db:migrate": "npm run db:migrate -w wms-backend",
+    "db:push": "npm run db:push -w wms-backend",
+    "db:studio": "npm run db:studio -w wms-backend",
+    "db:seed": "npm run db:seed -w wms-backend",
+    "install:all": "npm install"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

@@ -24,11 +24,14 @@ Tài liệu tổng hợp nằm trong thư mục [`docs/`](./docs/README.md):
 ```
 WMS_Cur/
 ├── docs/              # Tài liệu tổng hợp
-├── frontend/          # React SPA (Feature-Based Architecture)
-├── backend/           # Express API (Route → Controller → Service → Repository)
-├── package.json       # Root scripts
+├── frontend/          # React SPA (workspace: wms-frontend)
+├── backend/           # Express API (workspace: wms-backend)
+├── package.json       # Root monorepo (npm workspaces)
+├── package-lock.json  # Lockfile chung
 └── README.md
 ```
+
+Repo dùng **npm workspaces**: một lần `npm install` ở root là đủ cho cả backend và frontend.
 
 ## Prerequisites
 
@@ -41,7 +44,8 @@ WMS_Cur/
 ### 1. Install dependencies
 
 ```bash
-npm run install:all
+# Từ thư mục gốc repo
+npm install
 ```
 
 ### 2. Configure environment
@@ -79,16 +83,23 @@ npm run dev
 |--------|---------|
 | Sprint 1 | Auth, User, Role & Permission, Warehouse, Product, Supplier, Customer |
 | Sprint 2 | Goods Receipt, Goods Issue, Inventory, Dashboard |
-| Sprint 3 | Stock Take, Stock Adjustment, Report, Audit Log, Deploy |
+| Sprint 3 | Stock Take, Stock Adjustment, Report, Audit Log (Deploy để sau) |
 
 ## Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Run frontend + backend concurrently |
-| `npm run dev:frontend` | Run frontend only |
-| `npm run dev:backend` | Run backend only |
-| `npm run build` | Build frontend for production |
-| `npm run start` | Start backend production server |
-| `npm run db:migrate` | Run Prisma migrations |
-| `npm run db:studio` | Open Prisma Studio |
+| `npm install` | Cài deps cho root + backend + frontend |
+| `npm run dev` | Chạy frontend + backend |
+| `npm run dev:frontend` | Chỉ frontend |
+| `npm run dev:backend` | Chỉ backend |
+| `npm run build` | Build frontend |
+| `npm run start` | Start backend (production) |
+| `npm test` | Chạy test BE + FE |
+| `npm run test:backend` | Test backend |
+| `npm run test:frontend` | Test frontend |
+| `npm run db:generate` | Prisma generate |
+| `npm run db:push` | Prisma db push |
+| `npm run db:migrate` | Prisma migrate |
+| `npm run db:seed` | Seed dữ liệu |
+| `npm run db:studio` | Prisma Studio |

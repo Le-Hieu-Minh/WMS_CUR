@@ -8,9 +8,11 @@
 
 ## Cài đặt
 
+Repo là **npm workspaces** (backend + frontend trong một repo).
+
 ```bash
-# Từ thư mục gốc WMS_Cur
-npm run install:all
+# Từ thư mục gốc WMS_Cur — cài cả root, backend, frontend
+npm install
 ```
 
 ## Cấu hình môi trường
@@ -33,16 +35,13 @@ JWT_REFRESH_SECRET=<chuỗi >= 32 ký tự khác>
 ```bash
 npm run db:generate
 npm run db:push
-# hoặc từ backend:
-cd backend
-npx prisma db push
 npm run db:seed
 ```
 
 Seed tạo:
 
 - Roles: Admin, Manager, Staff  
-- Permissions Sprint 1  
+- Permissions (Sprint 1–3)  
 - User: `admin@wms.com` / `Admin@123`  
 
 ## Chạy development
@@ -61,19 +60,24 @@ npm run dev
 
 | Command | Mô tả |
 |---------|--------|
+| `npm install` | Cài deps monorepo |
 | `npm run dev` | FE + BE |
+| `npm run dev:backend` | Chỉ BE |
+| `npm run dev:frontend` | Chỉ FE |
+| `npm test` | Test BE + FE |
+| `npm run test:backend` | Test backend |
+| `npm run test:frontend` | Test frontend |
 | `npm run db:studio` | Prisma Studio |
 | `npm run db:seed` | Seed dữ liệu |
-| `cd backend && npm test` | Test backend |
-| `cd frontend && npm test` | Test frontend |
 
 ## Cấu trúc repo
 
 ```
 WMS_Cur/
-├── docs/           # Tài liệu tổng hợp
-├── frontend/       # React SPA
-├── backend/        # Express API
-├── package.json
+├── docs/              # Tài liệu
+├── frontend/          # workspace: wms-frontend
+├── backend/           # workspace: wms-backend
+├── package.json       # root workspaces + scripts
+├── package-lock.json  # lockfile chung
 └── README.md
 ```
