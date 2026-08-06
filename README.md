@@ -55,7 +55,7 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
 ```
 
-Chỉnh sửa `backend/.env` với thông tin PostgreSQL và JWT secret.
+Chỉnh sửa `backend/.env` với Neon `DATABASE_URL` (hoặc Postgres local), JWT secret (≥ 32 ký tự), và tùy chọn Cloudflare R2 (`R2_*`) cho upload file.
 
 ### 3. Setup database
 
