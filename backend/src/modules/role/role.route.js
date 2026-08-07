@@ -13,6 +13,13 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Roles
+ *   description: Quản lý vai trò và phân quyền
+ */
+
 router.get('/', authorize('role:read'), validate(listRolesSchema), roleController.list);
 router.get('/meta/permissions', authorize('role:read'), roleController.listPermissions);
 router.get('/:id', authorize('role:read'), validate(roleIdSchema), roleController.getById);

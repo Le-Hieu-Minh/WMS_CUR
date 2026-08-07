@@ -14,6 +14,13 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Products
+ *   description: Quản lý sản phẩm
+ */
+
 router.get('/', authorize('product:read'), validate(listProductsSchema), productController.list);
 router.get('/:id', authorize('product:read'), validate(productIdSchema), productController.getById);
 router.post('/', authorize('product:create'), validate(createProductSchema), productController.create);

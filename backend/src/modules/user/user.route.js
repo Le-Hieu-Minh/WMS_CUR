@@ -15,6 +15,13 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: Quản lý người dùng
+ */
+
 router.get('/', authorize('user:read'), validate(listUsersSchema), userController.list);
 router.get('/meta/roles', authorize('user:read'), userController.listRoleOptions);
 router.get('/:id', authorize('user:read'), validate(userIdSchema), userController.getById);

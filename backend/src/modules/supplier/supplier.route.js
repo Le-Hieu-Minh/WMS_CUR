@@ -14,6 +14,13 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Suppliers
+ *   description: Quản lý nhà cung cấp
+ */
+
 router.get('/', authorize('supplier:read'), validate(listSuppliersSchema), supplierController.list);
 router.get('/:id', authorize('supplier:read'), validate(supplierIdSchema), supplierController.getById);
 router.post('/', authorize('supplier:create'), validate(createSupplierSchema), supplierController.create);

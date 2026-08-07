@@ -14,6 +14,13 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Warehouses
+ *   description: Quản lý kho
+ */
+
 router.get('/', authorize('warehouse:read'), validate(listWarehousesSchema), warehouseController.list);
 router.get('/:id', authorize('warehouse:read'), validate(warehouseIdSchema), warehouseController.getById);
 router.post('/', authorize('warehouse:create'), validate(createWarehouseSchema), warehouseController.create);

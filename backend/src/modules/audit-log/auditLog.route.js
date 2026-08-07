@@ -7,6 +7,13 @@ import { listAuditLogsSchema, auditLogIdSchema } from './auditLog.validation.js'
 const router = Router();
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Audit Logs
+ *   description: Nhật ký hoạt động hệ thống
+ */
+
 router.get('/', authorize('audit-log:read'), validate(listAuditLogsSchema), auditLogController.list);
 router.get('/:id', authorize('audit-log:read'), validate(auditLogIdSchema), auditLogController.getById);
 

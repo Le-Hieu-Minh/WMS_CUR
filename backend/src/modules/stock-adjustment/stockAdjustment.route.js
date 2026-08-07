@@ -12,6 +12,13 @@ import {
 const router = Router();
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Stock Adjustments
+ *   description: Quản lý phiếu điều chỉnh tồn kho
+ */
+
 router.get('/', authorize('stock-adjustment:read'), validate(listStockAdjustmentsSchema), stockAdjustmentController.list);
 router.get('/:id', authorize('stock-adjustment:read'), validate(stockAdjustmentIdSchema), stockAdjustmentController.getById);
 router.post('/', authorize('stock-adjustment:create'), validate(createStockAdjustmentSchema), stockAdjustmentController.create);

@@ -14,6 +14,13 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Customers
+ *   description: Quản lý khách hàng
+ */
+
 router.get('/', authorize('customer:read'), validate(listCustomersSchema), customerController.list);
 router.get('/:id', authorize('customer:read'), validate(customerIdSchema), customerController.getById);
 router.post('/', authorize('customer:create'), validate(createCustomerSchema), customerController.create);
