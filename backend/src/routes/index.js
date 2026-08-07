@@ -15,6 +15,7 @@ import stockTakeRoutes from '../modules/stock-take/stockTake.route.js';
 import stockAdjustmentRoutes from '../modules/stock-adjustment/stockAdjustment.route.js';
 import auditLogRoutes from '../modules/audit-log/auditLog.route.js';
 import reportRoutes from '../modules/report/report.route.js';
+import uploadRoutes from '../modules/upload/upload.route.js';
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use('/stock-takes', stockTakeRoutes);
 router.use('/stock-adjustments', stockAdjustmentRoutes);
 router.use('/audit-logs', auditLogRoutes);
 router.use('/reports', reportRoutes);
+router.use('/uploads', uploadRoutes);
 
 export default router;

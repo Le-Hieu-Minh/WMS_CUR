@@ -22,7 +22,7 @@ Giúp developer mới clone repo → cấu hình → seed → chạy FE/BE trong
 2. npm install (root)
 3. Copy .env.example → .env (backend + frontend)
 4. Cấu hình DATABASE_URL + JWT secrets (+ R2 nếu cần upload)
-5. npm run db:generate → db:push → db:seed
+5. npm run db:generate → db:migrate → db:seed
 6. npm run dev
 7. Đăng nhập admin@wms.com / Admin@123
 ```
@@ -31,7 +31,7 @@ Giúp developer mới clone repo → cấu hình → seed → chạy FE/BE trong
 flowchart TD
   A[Clone repo] --> B[npm install]
   B --> C[Cấu hình .env]
-  C --> D[Prisma generate/push/seed]
+  C --> D[Prisma generate/migrate/seed]
   D --> E[npm run dev]
   E --> F[FE :5173 / BE :3000]
 ```
@@ -103,9 +103,18 @@ R2_PUBLIC_URL=https://pub-xxxx.r2.dev
 
 ```bash
 npm run db:generate
-npm run db:push
+npm run db:migrate
 npm run db:seed
 ```
+
+DB đã tạo bằng `db:push` trước đó: đánh dấu migration baseline đã áp dụng (không chạy lại SQL):
+
+```bash
+cd backend
+npx prisma migrate resolve --applied 20260808000000_init
+```
+
+Production / CI: `npm run db:migrate:deploy` (không dùng `db:push`).
 
 Seed tạo:
 

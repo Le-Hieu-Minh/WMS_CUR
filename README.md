@@ -61,7 +61,7 @@ Chỉnh sửa `backend/.env` với Neon `DATABASE_URL` (hoặc Postgres local), 
 
 ```bash
 npm run db:generate
-npm run db:push
+npm run db:migrate
 npm run db:seed
 ```
 
@@ -99,7 +99,8 @@ npm run dev
 | `npm run test:backend` | Test backend |
 | `npm run test:frontend` | Test frontend |
 | `npm run db:generate` | Prisma generate |
-| `npm run db:push` | Prisma db push |
-| `npm run db:migrate` | Prisma migrate |
+| `npm run db:migrate` | Prisma migrate (dev) |
+| `npm run db:migrate:deploy` | Prisma migrate deploy (prod/CI) |
+| `npm run db:push` | Prisma db push (prototype only) |
 | `npm run db:seed` | Seed dữ liệu |
 | `npm run db:studio` | Prisma Studio |

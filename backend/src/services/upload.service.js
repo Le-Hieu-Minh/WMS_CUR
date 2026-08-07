@@ -25,7 +25,8 @@ export async function uploadFile(file, folder = 'uploads') {
     throw new ApiError(HttpStatus.SERVICE_UNAVAILABLE, 'File storage is not configured');
   }
 
-  const key = `${folder}/${Date.now()}-${file.originalname}`;
+  const safeName = file.originalname.replace(/[^\w.\-()]/g, '_');
+  const key = `${folder}/${Date.now()}-${safeName}`;
 
   await client.send(
     new PutObjectCommand({
