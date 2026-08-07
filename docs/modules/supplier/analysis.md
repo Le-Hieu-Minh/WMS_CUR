@@ -1,63 +1,89 @@
-# Supplier – Phân tích nghiệp vụ (tổng hợp 23 mục)
+# Supplier – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Quản lý nhà cung cấp (NCC) — mã, tên, liên hệ, địa chỉ. Dùng cho phiếu nhập kho Sprint 2.
+Phân tích module **nhà cung cấp** — đối tác cung cấp hàng, tham chiếu trên phiếu nhập kho (goods receipt).
 
-## 2. Mục tiêu
+## Purpose
 
-- CRUD NCC master data  
-- Mã unique UPPERCASE  
-- Soft delete INACTIVE  
-- `supplier:*` permissions  
+Xác định actor, luồng và ràng buộc liên kết procurement.
 
-## 3. Nghiệp vụ
+## Scope
 
-List/Search · Create · Update · Soft delete — Actor: Admin, Manager.
+Master data NCC. Không quản lý PO, invoice.
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| SUP-01 | Danh sách + search | Must |
-| SUP-02 | Tạo NCC | Must |
-| SUP-03 | Sửa thông tin liên hệ | Must |
-| SUP-04 | Vô hiệu hóa | Must |
+### UC-SU-01: Đăng ký NCC
 
-## 5–7. Flow
+Nhập mã SUP-xxx, tên công ty, người liên hệ → ACTIVE.
 
-`/suppliers` → MasterDataListPage → CRUD tương tự Warehouse.
+### UC-SU-02: Dùng trên phiếu nhập
 
-## 8. Business Rules
+Goods receipt chọn supplier_id → service validate supplier ACTIVE (nếu có).
 
-- code unique, UPPERCASE  
-- Search: code, name, contactPerson, phone  
-- DELETE = INACTIVE  
+### UC-SU-03: Ngừng hợp tác
 
-## 9. Validation
+Soft delete INACTIVE — phiếu mới không chọn.
 
-code 1–50, name 2–255, contactPerson max 255, phone 20, email, address 500, notes 1000
+```mermaid
+sequenceDiagram
+  participant GR as Goods Receipt
+  participant SU as Supplier
+  GR->>SU: get supplier by id
+  alt INACTIVE or missing
+    GR-->>GR: reject create
+  end
+```
 
-## 10. Exception
+## Business Rules
 
-400 · 401 · 403 · 404 · 409 · 500  
+| ID | Rule |
+|----|------|
+| SU-BR-01 | code unique UPPERCASE |
+| SU-BR-02 | name min 2 chars |
+| SU-BR-03 | email valid if set |
+| SU-BR-04 | soft delete only |
+| SU-BR-05 | INACTIVE blocked on new goods receipt |
+| SU-BR-06 | notes max 1000 |
 
-## 11. Permission Matrix
+## Technical Design
 
-GET → supplier:read · POST → create · PUT/PATCH → update · DELETE → delete
+Identical stack to customer module. [backend.md](./backend.md)
 
-## 12–15. Design
+## API / Database
 
-Xem file con database, api, frontend, backend.
+[api.md](./api.md) · [database.md](./database.md)
 
-## 16. AC
+## Validation
 
-CRUD, mã trùng 409, soft delete.
+Zod BE/FE aligned on contact fields.
 
-## 17. Testing
+## Security
 
-Unit service + FE supplierSchema + integration CRUD.
+supplier:* RBAC
 
-## 18–23. Docs
+## Error Handling
 
-Tách file trong thư mục module.
+409 Mã nhà cung cấp đã tồn tại · 404 Không tìm thấy nhà cung cấp
+
+## Examples
+
+SUP-001 Công ty ABC — dùng trên phiếu nhập tháng 1.
+
+## Design Decisions
+
+| Decision | Reason |
+|----------|--------|
+| Mirror customer model | Same party structure |
+| Optional on receipt | Some internal receipts without supplier |
+
+## Notes
+
+goodsReceipt.service validates supplier when supplierId provided.
+
+## Checklist
+
+- [x] BR + workflow
+- [x] goods-receipt link
+- [ ] PO integration (future)

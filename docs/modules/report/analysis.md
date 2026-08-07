@@ -1,101 +1,68 @@
-# Report – Phân tích 23 mục
+# Report – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Module báo cáo đọc dữ liệu nghiệp vụ, lọc theo khoảng thời gian/kho/SP, xem trên UI và xuất Excel/PDF.
+Phân tích nhu cầu báo cáo Sprint 3 và nguồn dữ liệu từng loại.
 
-## 2. Mục tiêu
+## Purpose
 
-- 6 loại báo cáo theo Master Prompt
-- Filter chuẩn (dateFrom, dateTo, warehouseId, …)
-- Export Excel + PDF
-- Không sửa dữ liệu nguồn
+Map report type → bảng/query → cột output cho BA và dev.
 
-## 3. Nghiệp vụ
+## Scope
 
-Báo cáo = truy vấn read-only + presentation. Dữ liệu lấy từ inventories, goods_receipts/items, goods_issues/items, stock_takes, stock_adjustments.
+Operational reporting MVP; không data warehouse.
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| RP-01 | Xem báo cáo tồn kho | Must |
-| RP-02 | Xem báo cáo nhập/xuất theo ngày | Must |
-| RP-03 | Xem báo cáo kiểm kê / điều chỉnh | Must |
-| RP-04 | Xem giá trị tồn | Must |
-| RP-05 | Xuất Excel | Must |
-| RP-06 | Xuất PDF | Must |
+User chọn report → apply filters → preview → export optional.
 
-## 5–7. Flow
+## Business Rules
 
-```
-/reports → chọn loại → filter → Xem bảng → Export Excel/PDF
-```
+| Type | Nguồn | Filter ngày |
+|------|-------|-------------|
+| inventory | inventories | Không (chỉ warehouseId) |
+| stock-value | inventories + costPrice | Không |
+| goods-receipts | goods_receipt_items (CONFIRMED) | receiptDate |
+| goods-issues | goods_issue_items (CONFIRMED) | issueDate |
+| stock-takes | stock_take_items (CONFIRMED) | takeDate |
+| stock-adjustments | stock_adjustment_items (CONFIRMED) | adjustDate |
 
-## 8. Business Rules
+## Technical Design
 
-| ID | Rule |
-|----|------|
-| BR-RP01 | Chỉ phiếu CONFIRMED (nhập/xuất/kiểm kê/điều chỉnh) |
-| BR-RP02 | dateFrom ≤ dateTo |
-| BR-RP03 | Giá trị tồn = qty × costPrice |
-| BR-RP04 | Export giới hạn max rows (vd 10_000) tránh OOM |
-| BR-RP05 | Không cache phức tạp MVP |
+REPORT_HANDLERS map type string → async function(query).
 
-## 9. Validation
+Row shape = flat object; Excel/PDF headers = Object.keys(first row).
 
-type enum, dateFrom/dateTo optional ISO date, warehouseId optional, format excel|pdf
+## API / Database
 
-## 10. Exception
+Read-only queries — xem database.md.
 
-400 filter sai · 403 · 404 loại không hỗ trợ · 500 generate file fail
+## Validation
 
-## 11. Permission
+dateTo inclusive end of day (23:59:59.999).
 
-| Action | Permission |
-|--------|------------|
-| Xem báo cáo | report:read |
-| Export | report:export |
+## Security
 
-## 12. Database
+Export permission tách read — staff có thể xem nhưng không tải file.
 
-Không bảng mới. Query từ bảng hiện có (+ ST/SA sau khi có).
+## Error Handling
 
-## 13. API
+Empty dataset → response rows=[]; Excel sheet "Không có dữ liệu".
 
-Xem [api.md](./api.md)
+## Examples
 
-## 14. Frontend
+stock-takes row: code, date, warehouseCode, productCode, systemQty, countedQty, variance.
 
-- Page tabs hoặc select loại báo cáo
-- Filter bar + Table
-- Nút Export Excel / PDF (download blob)
-- Loading/Empty/Error
+## Design Decisions
 
-## 15. Backend
+Item-level reports (not header-only) — chi tiết theo dòng SP.
 
-```
-modules/report/
-  report.route|controller|service
-  exporters/excel.exporter.js
-  exporters/pdf.exporter.js
-  queries/*.js
-```
+## Notes
 
-Libs: `exceljs`, `pdfkit` (thêm dependency khi code).
+Variance computed at report time from stored system_qty/counted_qty.
 
-## 16. AC
+## Checklist
 
-- Mỗi loại báo cáo trả đúng cột
-- Filter ngày/kho hoạt động
-- File Excel/PDF tải được
-
-## 17. Testing
-
-Unit: query builders, value calc  
-Integration: each report 200/400/401/403  
-FE: filter schema
-
-## 18–23. Docs / Guides
-
-Triển khai sau Stock Take & Adjustment để đủ dữ liệu kiểm kê/điều chỉnh.
+- [x] Source table per type
+- [x] CONFIRMED filter
+- [ ] Business sign-off column list

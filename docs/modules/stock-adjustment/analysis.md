@@ -1,78 +1,76 @@
-# Stock Adjustment – Phân tích 23 mục
+# Stock Adjustment – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Điều chỉnh tồn kho khi có sai lệch, hư hỏng, mất mát, hàng tìm lại — không đi qua phiếu nhập/xuất thông thường.
+Phân tích nhu cầu điều chỉnh tồn độc lập với nhập/xuất/kiểm kê, tập trung vào loại điều chỉnh và ràng buộc không âm kho.
 
-## 2. Mục tiêu
+## Purpose
 
-- Tạo phiếu điều chỉnh có lý do rõ ràng
-- Tăng/giảm tồn theo dòng hàng khi Confirm
-- Lịch sử phục vụ báo cáo
+Làm rõ khi nào dùng Adjustment thay vì Stock Take hoặc GR/GI.
 
-## 3. Nghiệp vụ
+## Scope
 
-Khác Stock Take: không snapshot toàn bộ kho; điều chỉnh có chủ đích từng SP với lý do.
+Điều chỉnh có chủ đích (hư, mất, thừa phát hiện ngoài kiểm kê). Một phiếu một kho, nhiều dòng SP.
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| SA-01 | Tạo phiếu điều chỉnh + lý do | Must |
-| SA-02 | Thêm dòng tăng/giảm | Must |
-| SA-03 | Confirm cập nhật tồn | Must |
-| SA-04 | Không giảm quá tồn hiện có | Must |
-| SA-05 | Hủy/xóa nháp | Must |
+```mermaid
+flowchart LR
+    A[Lập phiếu + lý do] --> B[Chọn INCREASE/DECREASE]
+    B --> C{Lưu DRAFT}
+    C --> D[Confirm]
+    D --> E{DECREASE đủ tồn?}
+    E -->|Có| F[Cập nhật inventory]
+    E -->|Không| G[409 Conflict]
+    F --> H[CONFIRMED]
+```
 
-## 5–7. Use Case / Flow
+## Business Rules
 
-Tương tự GR/GI: Draft → Confirm (transaction apply +/-) → Done.
+| Use case | Type | Ghi chú |
+|----------|------|---------|
+| Hàng hư hỏng | DECREASE | reason mô tả |
+| Tìm thấy thêm | INCREASE | |
+| Kiểm kê chuẩn hóa | Stock Take | Không dùng SA |
+| Nhập từ NCC | GR | Không dùng SA |
 
-## 8. Business Rules
+## Technical Design
 
-| ID | Rule |
-|----|------|
-| BR-SA01 | reason bắt buộc (min 3 ký tự) |
-| BR-SA02 | quantity > 0; type INCREASE\|DECREASE |
-| BR-SA03 | Không trùng product |
-| BR-SA04 | DECREASE không vượt tồn |
-| BR-SA05 | Confirm transaction |
-| BR-SA06 | CONFIRMED immutable |
+`validateItems` không đọc tồn lúc draft — chỉ validate master data. Check tồn khi **confirm** cho DECREASE.
 
-## 9. Validation
+Enum Prisma `AdjustmentType`: INCREASE, DECREASE.
 
-warehouseId, adjustDate, reason, items[{productId, type, quantity, note?}]
+## API / Database
 
-## 10. Exception
+Tables `stock_adjustments`, `stock_adjustment_items`. Xem [database.md](./database.md).
 
-409 thiếu tồn khi confirm · 409 không DRAFT · 400 validation · 404
+## Validation
 
-## 11. Permission
+reason 3–500 chars; quantity positive; unique product per document.
 
-`stock-adjustment:read|create|update|delete` (confirm dùng update)
+## Security
 
-## 12–13. DB / API
+Confirm là thao tác nhạy cảm — ghi audit; nên giới hạn role Manager+.
 
-Xem database.md, api.md
+## Error Handling
 
-## 14. Frontend
+Rollback transaction nếu bất kỳ dòng DECREASE fail.
 
-List + Dialog form (reason textarea, items type select, qty) + Confirm/Cancel/Delete
+## Examples
 
-## 15. Backend
+Phiếu 2 dòng: SP A INCREASE 10, SP B DECREASE 5 — confirm atomic, cả hai thành công hoặc none.
 
-`modules/stock-adjustment/*` · reuse inventory increase/decrease
+## Design Decisions
 
-## 16. AC
+Không cho DECREASE âm — thay vì cho phép và flag warning.
 
-- Increase confirm → tồn tăng
-- Decrease vượt tồn → 409
-- Reason bắt buộc
+## Notes
 
-## 17. Testing
+Một SP một type/phiếu (unique productId) — muốn tăng và giảm cùng SP cần hai phiếu hoặc mở rộng schema sau.
 
-Unit service apply; Integration confirm cases; FE schema
+## Checklist
 
-## 18–23. Docs / Guides
-
-Theo cấu trúc module; triển khai sau Stock Take.
+- [x] Phân biệt SA vs ST
+- [x] BR không âm kho
+- [x] reason mandatory
+- [ ] Policy nội bộ ai được confirm

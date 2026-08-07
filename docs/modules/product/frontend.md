@@ -1,42 +1,81 @@
-# Product – Frontend Design
+# Product – Frontend
 
-## Routes
+## Overview
 
-| Path | Page | Guard |
-|------|------|-------|
-| `/products` | ProductsPage | Protected + `product:read` |
+UI quản lý sản phẩm tại `/products`, cấu hình `MasterDataListPage` với fields giá, danh mục và format tiền tệ.
 
-## ProductsPage
+## Purpose
 
-Dùng `MasterDataListPage` với config sản phẩm.
+Mô tả cấu trúc component, form fields và hành vi list/search phía client.
 
-### Fields
+## Scope
 
-code, name, category, unit, price (number), costPrice (number), minStock (number), description
+Trang ProductsPage và shared master-data layer. Không gồm chọn SP trên phiếu.
 
-### Columns
+## Workflow
 
-Mã · Tên · Danh mục · ĐVT · Giá bán (format `vi-VN`)
+ProductsPage → MasterDataListPage → productApi + productSchema → CRUD dialog/table.
 
-### Permissions
+## Business Rules
 
-`product:create` · `product:update` · `product:delete`
+| UI | Rule |
+|----|------|
+| Xóa | Chỉ ACTIVE |
+| Giá bán cột | `toLocaleString('vi-VN')` |
+| Default form | unit=pcs, price/costPrice/minStock=0 |
+| Permissions | product:create/update/delete |
 
-## Feature structure
+## Technical Design
 
-```
-frontend/src/features/products/pages/ProductsPage.jsx
-frontend/src/features/master-data/api/masterDataApi.js       # productApi
-frontend/src/features/master-data/schemas/masterDataSchema.js # productSchema
-```
+| File | Role |
+|------|------|
+| `features/products/pages/ProductsPage.jsx` | Page config |
+| `master-data/components/MasterDataListPage.jsx` | Shared UI |
+| `master-data/api/masterDataApi.js` | productApi |
+| `master-data/schemas/masterDataSchema.js` | productSchema |
 
-## Query keys
+**Fields:** code, name, category, unit, price, costPrice, minStock, description
 
-```
-['products', { page, search, status }]
-```
+**Columns:** code, name, category, unit, price (formatted)
 
-## Ghi chú UI
+**Không có:** imageUrl field trên form (BE hỗ trợ qua API)
 
-- Default unit `pcs`, price/costPrice/minStock = 0  
-- Chưa có upload imageUrl trên FE (field có trên BE)
+## API / Database
+
+[api.md](./api.md) · [database.md](./database.md)
+
+## Validation
+
+productSchema: code/name required; price/costPrice coerce ≥0; minStock int ≥0.
+
+Number fields giữ giá trị 0; string fields empty → null khi submit.
+
+## Security
+
+usePermissions cho nút Thêm/Sửa/Xóa.
+
+## Error Handling
+
+getErrorMessage từ API response; formError trong dialog.
+
+## Examples
+
+Thêm SP: PRD-001, Laptop Dell, Electronics, giá 15000000.
+
+## Design Decisions
+
+| Decision | Reason |
+|----------|--------|
+| Number inputs for price | HTML step 0.01 |
+| No category dropdown | Free text match BE |
+| Shared page component | Consistency |
+
+## Notes
+
+List limit=10 fixed. No category filter on UI (API supports category param).
+
+## Checklist
+
+- [x] Fields/columns match ProductsPage.jsx
+- [x] Price formatting documented
+- [ ] Add category filter UI (optional)

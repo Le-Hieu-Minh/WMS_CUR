@@ -1,90 +1,102 @@
-# Product – Phân tích nghiệp vụ (tổng hợp 23 mục)
+# Product – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Quản lý danh mục sản phẩm: mã, tên, danh mục, đơn vị, giá, tồn tối thiểu. Nền tảng cho inventory và báo cáo.
+Phân tích module **danh mục sản phẩm** — định nghĩa hàng hóa tham gia chu trình nhập, xuất, kiểm kê và báo cáo tồn.
 
-## 2. Mục tiêu
+## Purpose
 
-- CRUD sản phẩm master data  
-- Mã SP unique, UPPERCASE  
-- Giá bán / giá vốn Decimal  
-- Soft delete = INACTIVE  
-- Phân quyền `product:*`  
+Làm rõ actor, luồng dữ liệu và ràng buộc giá/tồn tối thiểu trước khi mở rộng catalog.
 
-## 3. Nghiệp vụ
+## Scope
 
-| Tác vụ | Actor |
-|--------|-------|
-| List / Search / Filter | Admin, Manager |
-| Create / Update sản phẩm | Admin, Manager |
-| Vô hiệu hóa sản phẩm | Admin, Manager |
+Quản lý thông tin master sản phẩm. Không quản lý tồn thực tế (module Inventory) hay giá theo thời gian.
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| PRD-01 | Danh sách + search + filter category/status | Must |
-| PRD-02 | Tạo sản phẩm với giá và ĐVT | Must |
-| PRD-03 | Sửa thông tin / giá | Must |
-| PRD-04 | minStock cho cảnh báo (Sprint 2) | Must |
-| PRD-05 | Mã không trùng | Must |
+### UC-PR-01: Tạo sản phẩm
 
-## 5. Use Case
+Admin nhập mã, tên, danh mục, ĐVT, giá → API normalize code → unique check → lưu ACTIVE, unit default `pcs`, price/costPrice default 0.
 
-UC-List · UC-Create · UC-Update · UC-ChangeStatus · UC-SoftDelete  
+### UC-PR-02: Cập nhật giá
 
-## 6–7. Flow
+PUT partial body — chỉ field gửi lên được cập nhật. Giá trả về dạng number trong JSON.
 
-`/products` → filter → Dialog form → Lưu. Xóa = soft INACTIVE.
+### UC-PR-03: Vô hiệu hóa
 
-## 8. Business Rules
+DELETE → INACTIVE. Phiếu nhập/xuất/kiểm kê/điều chỉnh từ chối sản phẩm INACTIVE.
 
-| ID | Rule |
-|----|------|
-| BR-P01 | code unique, UPPERCASE |
-| BR-P02 | unit default `pcs` |
-| BR-P03 | price, costPrice ≥ 0 |
-| BR-P04 | minStock ≥ 0 integer |
-| BR-P05 | mapProduct convert Decimal → Number |
+```mermaid
+sequenceDiagram
+  participant GR as Goods Receipt
+  participant PR as Product Service
+  GR->>PR: Validate productIds
+  PR-->>GR: ACTIVE OK / INACTIVE reject
+```
 
-## 9. Validation
+## Business Rules
 
-- code 1–50, name 2–255  
-- description max 2000, category max 100, unit max 20  
-- price/costPrice min 0, minStock int min 0  
-- imageUrl URL optional (BE); FE MVP chưa upload  
-- List: + filter `category`, sortBy code|name|price|createdAt  
+| ID | Quy tắc | Input | Ràng buộc |
+|----|---------|-------|-----------|
+| PR-BR-01 | Mã unique UPPERCASE | code | max 50 |
+| PR-BR-02 | Tên min 2 ký tự | name | trim |
+| PR-BR-03 | Giá không âm | price, costPrice | ≥ 0 |
+| PR-BR-04 | minStock integer ≥ 0 | minStock | cảnh báo low stock |
+| PR-BR-05 | unit default pcs | unit | max 20 |
+| PR-BR-06 | imageUrl URL hợp lệ | imageUrl | nullable, BE only |
+| PR-BR-07 | category filter | list query | equals insensitive |
+| PR-BR-08 | Soft delete only | DELETE | INACTIVE |
 
-## 10. Exception
+## Technical Design
 
-400 · 401 · 403 · 404 · 409 · 500  
+Pattern master data giống warehouse. Khác biệt: Decimal mapping, filter category, sortBy price. Xem [backend.md](./backend.md).
 
-## 11. Permission Matrix
+## API / Database
 
-| Endpoint | Permission |
-|----------|------------|
-| GET | product:read |
-| POST | product:create |
-| PUT / PATCH | product:update |
-| DELETE | product:delete |
+[api.md](./api.md) · [database.md](./database.md)
 
-## 12–15. Design
+## Validation
 
-Xem các file database, api, frontend, backend trong thư mục.
+| Layer | File |
+|-------|------|
+| API | product.validation.js |
+| FE form | productSchema (không imageUrl) |
 
-## 16. Acceptance Criteria
+## Security
 
-- CRUD OK, giá hiển thị locale vi-VN  
-- Filter category/status  
-- Soft delete  
+RBAC `product:read|create|update|delete`.
 
-## 17. Testing Strategy
+## Error Handling
 
-Unit: mapProduct, assertCodeUnique  
-FE: productSchema  
-Integration: full CRUD  
+| Case | Response |
+|------|----------|
+| Không tìm thấy | 404 |
+| Trùng mã | 409 Mã sản phẩm đã tồn tại |
+| Giá âm | 400 validation |
 
-## 18–23. Docs
+## Examples
 
-Đã tách file con.
+| Story | Kịch bản |
+|-------|----------|
+| PR-US-01 | Tạo PRD-001 Laptop, category Electronics, minStock 5 |
+| PR-US-02 | Lọc category=Electronics trên API |
+| PR-US-03 | Vô hiệu hóa SP cũ — phiếu mới không chọn được |
+
+## Design Decisions
+
+| Quyết định | Lý do | Trade-off |
+|------------|-------|-----------|
+| Category string | Đơn giản sprint 1 | Trùng tên khác hoa |
+| mapProduct Number() | JSON không có Decimal | Mất precision cực lớn (chấp nhận) |
+| minStock on product | Một ngưỡng global | Chưa theo từng kho |
+
+## Notes
+
+- Dashboard có thể query low stock JOIN products (xem dashboard module)
+- FE chưa expose imageUrl — thêm qua API trực tiếp nếu cần
+
+## Checklist
+
+- [x] Use cases + BR IDs
+- [x] Liên kết phiếu validate ACTIVE
+- [ ] Category master table (future)

@@ -1,90 +1,119 @@
-# Warehouse – Phân tích nghiệp vụ (tổng hợp 23 mục)
+# Warehouse – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Quản lý danh mục kho hàng — thông tin địa điểm, liên hệ, trạng thái. Nền tảng cho nghiệp vụ tồn kho Sprint 2.
+Phân tích module quản lý **danh mục kho** — thực thể master data định danh nơi lưu trữ hàng hóa. Kho là điều kiện tiên quyết cho mọi nghiệp vụ kho.
 
-## 2. Mục tiêu
+## Purpose
 
-- CRUD master data kho  
-- Mã kho unique, chuẩn hóa UPPERCASE  
-- Soft delete = INACTIVE  
-- Phân quyền `warehouse:*`  
+Xác định ai làm gì, dữ liệu đầu vào/đầu ra và ràng buộc nghiệp vụ trước khi triển khai hoặc mở rộng module.
 
-## 3. Nghiệp vụ
+## Scope
 
-| Tác vụ | Actor |
-|--------|-------|
-| List / Search / Filter status | Admin, Manager |
-| Create / Update | Admin, Manager |
-| Đổi trạng thái / Xóa (soft) | Admin, Manager |
+| Actor | Hành động |
+|-------|-----------|
+| Admin / User có quyền | Xem, tạo, sửa, vô hiệu hóa kho |
+| Hệ thống (module khác) | Validate kho ACTIVE khi tạo phiếu |
 
-## 4. User Story
+Ngoài phạm vi: quản lý tồn, vị trí kệ, phân quyền theo kho.
 
-| ID | Story | P |
-|----|-------|---|
-| WH-01 | Xem danh sách kho + search | Must |
-| WH-02 | Tạo kho mới | Must |
-| WH-03 | Sửa thông tin kho | Must |
-| WH-04 | Vô hiệu hóa kho (soft delete) | Must |
-| WH-05 | Mã kho không trùng | Must |
+## Workflow
 
-## 5. Use Case
+### UC-WH-01: Tạo kho mới
 
-UC-List · UC-Create · UC-Update · UC-ChangeStatus · UC-SoftDelete  
+```mermaid
+sequenceDiagram
+  participant U as Admin
+  participant FE as Frontend
+  participant API as Warehouse API
+  participant DB as Database
 
-## 6–7. Flow
+  U->>FE: Nhập form (code, name, ...)
+  FE->>API: POST /warehouses
+  API->>API: Normalize code UPPERCASE
+  API->>DB: Kiểm tra code unique
+  alt Trùng mã
+    API-->>FE: 409 Mã kho đã tồn tại
+  else OK
+    DB-->>API: INSERT status=ACTIVE
+    API-->>FE: 201 + data
+  end
+```
 
-Admin → `/warehouses` → Search / filter ACTIVE|INACTIVE → Dialog tạo/sửa → Lưu  
-Xóa: confirm → DELETE → set INACTIVE  
+### UC-WH-02: Vô hiệu hóa kho
 
-## 8. Business Rules
+Admin bấm Xóa → `DELETE /warehouses/:id` → service gọi `changeStatus(id, 'INACTIVE')`. Bản ghi vẫn tồn tại; phiếu mới không chọn được kho này.
 
-| ID | Rule |
-|----|------|
-| BR-W01 | `code` unique, normalize UPPERCASE |
-| BR-W02 | Tạo mới mặc định ACTIVE |
-| BR-W03 | DELETE = soft (INACTIVE) |
-| BR-W04 | Search: code, name, address |
+### UC-WH-03: Tra cứu danh sách
 
-## 9. Validation
+Tìm theo mã/tên/địa chỉ; lọc ACTIVE/INACTIVE; phân trang 10 bản ghi/trang (FE).
 
-- code: 1–50, required  
-- name: 2–255  
-- address max 500, phone max 20, email format, description max 1000  
-- status: ACTIVE \| INACTIVE  
-- List: page, limit, search, status, sortBy (code|name|createdAt)  
+## Business Rules
 
-## 10. Exception
+| ID | Quy tắc | Input | Output / Ràng buộc |
+|----|---------|-------|---------------------|
+| WH-BR-01 | Mã kho bắt buộc, unique | `code` | UPPERCASE, max 50 |
+| WH-BR-02 | Tên tối thiểu 2 ký tự | `name` | trim, max 255 |
+| WH-BR-03 | Email hợp lệ nếu có | `email` | nullable |
+| WH-BR-04 | Tạo mới = ACTIVE | — | Không set status từ client |
+| WH-BR-05 | Soft delete only | DELETE | status → INACTIVE |
+| WH-BR-06 | Kho INACTIVE | goods-receipt/issue, stock-take/adjustment | Từ chối tạo phiếu mới |
+| WH-BR-07 | Phiếu cũ giữ FK | Kho đã INACTIVE | Lịch sử không bị xóa |
 
-400 · 401 · 403 · 404 · 409 mã trùng · 500  
+## Technical Design
 
-## 11. Permission Matrix
+Module master data CRUD theo pattern chuẩn WMS. Không có state machine phức tạp — chỉ 2 trạng thái entity. Chi tiết kỹ thuật: [backend.md](./backend.md), [frontend.md](./frontend.md).
 
-| Endpoint | Permission |
-|----------|------------|
-| GET list/detail | warehouse:read |
-| POST create | warehouse:create |
-| PUT update / PATCH status | warehouse:update |
-| DELETE soft | warehouse:delete |
+## API / Database
 
-## 12–15. Design
+Không áp dụng chi tiết tại đây — xem [api.md](./api.md) và [database.md](./database.md).
 
-Xem [database.md](./database.md), [api.md](./api.md), [frontend.md](./frontend.md), [backend.md](./backend.md).
+## Validation
 
-## 16. Acceptance Criteria
+| Layer | Công cụ | Ghi chú |
+|-------|---------|---------|
+| API request | Zod | `warehouse.validation.js` |
+| Form FE | Zod | `warehouseSchema` trong masterDataSchema |
+| Nghiệp vụ | Service | assertCodeUnique |
 
-- CRUD + filter OK  
-- Mã trùng → 409  
-- Soft delete → status INACTIVE  
-- FE dùng MasterDataListPage  
+## Security
 
-## 17. Testing Strategy
+Phân quyền RBAC: `warehouse:read|create|update|delete`. Mọi request qua `authenticate` middleware.
 
-Unit: normalizeCode, assertCodeUnique  
-Integration: CRUD endpoints  
-FE: warehouseSchema validation  
+## Error Handling
 
-## 18–23. Docs
+| Tình huống | HTTP | Message |
+|------------|------|---------|
+| Không tìm thấy | 404 | Không tìm thấy kho |
+| Trùng mã | 409 | Mã kho đã tồn tại |
+| Thiếu quyền | 403 | Forbidden |
+| Validation | 400 | Chi tiết field |
 
-Đã tách thành các file trong thư mục này.
+## Examples
+
+| User Story | Kịch bản |
+|------------|----------|
+| WH-US-01 | Admin tạo `WH-001` / Kho chính → hiện trong dropdown phiếu nhập |
+| WH-US-02 | Vô hiệu hóa kho đang có tồn → tồn vẫn hiển thị, không tạo phiếu mới |
+| WH-US-03 | Tìm "Hà Nội" → lọc theo address chứa từ khóa |
+
+## Design Decisions
+
+| Quyết định | Lý do | Ưu điểm | Trade-off |
+|------------|-------|---------|-----------|
+| Soft delete | FK tới phiếu, inventory | An toàn dữ liệu | Danh sách có thể dài nếu không lọc |
+| Search OR trên code/name/address | UX tra cứu linh hoạt | Dễ tìm | Query phức tạp hơn index đơn |
+| Không hard delete | Audit, báo cáo | Nhất quán lịch sử | Không tái sử dụng mã cũ nếu vẫn còn bản ghi |
+
+## Notes
+
+- Giả định: một tenant, không phân kho theo chi nhánh công ty (chưa có field branch).
+- Kích hoạt lại kho INACTIVE: dùng `PATCH /:id/status` với `{ "status": "ACTIVE" }` (chưa có UI riêng).
+
+## Checklist
+
+- [x] Actor và use case rõ ràng
+- [x] Business rules có ID
+- [x] Workflow mermaid
+- [x] Cross-ref API/DB/FE
+- [ ] Cập nhật khi thêm multi-warehouse policy

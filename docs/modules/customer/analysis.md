@@ -1,63 +1,87 @@
-# Customer – Phân tích nghiệp vụ (tổng hợp 23 mục)
+# Customer – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Quản lý khách hàng (KH) — master data cho phiếu xuất kho Sprint 2.
+Phân tích module **khách hàng** — đối tượng nhận hàng xuất kho, liên kết phiếu xuất (goods issue).
 
-## 2. Mục tiêu
+## Purpose
 
-- CRUD khách hàng  
-- Mã KH unique UPPERCASE  
-- Soft delete INACTIVE  
-- `customer:*` permissions  
+Làm rõ actor, use case và ràng buộc với outbound logistics.
 
-## 3. Nghiệp vụ
+## Scope
 
-List/Search · Create · Update · Soft delete — Admin, Manager.
+Master data KH. Không quản lý đơn bán hàng đầy đủ.
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| CUS-01 | Danh sách + search | Must |
-| CUS-02 | Tạo KH | Must |
-| CUS-03 | Sửa liên hệ | Must |
-| CUS-04 | Vô hiệu hóa | Must |
+### UC-CU-01: Tạo KH
 
-## 5–7. Flow
+Mã CUS-xxx, tên, liên hệ → status ACTIVE.
 
-`/customers` → MasterDataListPage → CRUD.
+### UC-CU-02: Phiếu xuất
 
-## 8. Business Rules
+Goods issue chọn customer → validate ACTIVE.
 
-- code unique, UPPERCASE  
-- Search: code, name, contactPerson, phone  
-- DELETE = INACTIVE  
+### UC-CU-03: Ngừng giao dịch
 
-## 9. Validation
+Soft delete INACTIVE.
 
-Giống Supplier: code, name, contactPerson, phone, email, address, notes
+```mermaid
+sequenceDiagram
+  participant GI as Goods Issue
+  participant CU as Customer
+  GI->>CU: validate customerId
+  alt INACTIVE
+    GI-->>GI: reject
+  end
+```
 
-## 10. Exception
+## Business Rules
 
-400 · 401 · 403 · 404 · 409 · 500  
+| ID | Rule |
+|----|------|
+| CU-BR-01 | code unique UPPERCASE |
+| CU-BR-02 | name min 2 |
+| CU-BR-03 | soft delete INACTIVE |
+| CU-BR-04 | INACTIVE on new goods issue |
+| CU-BR-05 | notes max 1000 |
 
-## 11. Permission Matrix
+## Technical Design
 
-GET → customer:read · POST → create · PUT/PATCH → update · DELETE → delete
+Mirror supplier module. [backend.md](./backend.md)
 
-## 12–15. Design
+## API / Database
 
-Xem database, api, frontend, backend.
+[api.md](./api.md) · [database.md](./database.md)
 
-## 16. AC
+## Validation
 
-CRUD đầy đủ, soft delete, phân quyền.
+Zod BE/FE on contact fields
 
-## 17. Testing
+## Security
 
-Unit + integration + FE customerSchema.
+customer:* permissions
 
-## 18–23. Docs
+## Error Handling
 
-File con trong thư mục module.
+409 Mã khách hàng đã tồn tại · 404 Không tìm thấy khách hàng
+
+## Examples
+
+CUS-001 Công ty Alpha — phiếu xuất tháng 3.
+
+## Design Decisions
+
+| Decision | Reason |
+|----------|--------|
+| Separate from supplier | Different WMS flows (issue vs receipt) |
+| Same field set | Party contact pattern |
+
+## Notes
+
+goodsIssue.service validates customer when customerId provided.
+
+## Checklist
+
+- [x] BR + goods-issue workflow
+- [ ] Sales order link (future)

@@ -1,27 +1,95 @@
-# Customer – Database Documentation
+# Customer – Database Schema
 
-## Model `Customer`
+## Overview
 
-Bảng: `customers`
+Bảng `customers` — master data khách hàng, Prisma model `Customer`.
 
-| Field | Type | Ghi chú |
-|-------|------|---------|
-| id | UUID PK | |
-| code | String UNIQUE | |
-| name | String | |
-| contact_person | String? | |
-| phone | String? | |
-| email | String? | |
-| address | String? | |
-| notes | String? | |
-| status | EntityStatus | Default ACTIVE |
-| created_at | DateTime | |
-| updated_at | DateTime | |
+## Purpose
 
-## Index
+Schema và quan hệ với goods_issues.
 
-UNIQUE(code), INDEX(status)
+## Scope
 
-## Sprint 2
+customers table + incoming FKs
 
-FK từ Goods Issue header.
+## Workflow
+
+```mermaid
+erDiagram
+  Customer ||--o{ GoodsIssue : receives_shipment
+```
+
+## Business Rules
+
+code UNIQUE · EntityStatus · no hard delete
+
+## Technical Design
+
+customer.repository.js — Prisma CRUD
+
+## API / Database
+
+HTTP: [api.md](./api.md)
+
+### Bảng `customers`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | PK |
+| code | VARCHAR unique | Mã KH |
+| name | VARCHAR | Tên |
+| contact_person | VARCHAR nullable | |
+| phone | VARCHAR nullable | |
+| email | VARCHAR nullable | |
+| address | TEXT nullable | |
+| notes | TEXT nullable | |
+| status | EntityStatus | |
+| created_at | TIMESTAMPTZ | |
+| updated_at | TIMESTAMPTZ | |
+
+### PK / Unique / Index
+
+PK id · UNIQUE code · INDEX status
+
+### FK incoming
+
+`goods_issues.customer_id` → customers.id
+
+### Relationships
+
+1 customer : N goods issues. INACTIVE customer retained on historical issues.
+
+### Business Notes
+
+Structure mirrors suppliers — intentional symmetry.
+
+## Validation
+
+Application Zod; DB constraints on code/name
+
+## Security
+
+Prisma only
+
+## Error Handling
+
+Unique violation → 409 API
+
+## Examples
+
+```sql
+SELECT * FROM customers WHERE status = 'ACTIVE' ORDER BY code;
+```
+
+## Design Decisions
+
+Separate table vs single `parties` — clearer WMS domain language.
+
+## Notes
+
+`backend/prisma/schema.prisma` model Customer
+
+## Checklist
+
+- [x] Columns + FK goods_issues
+- [x] Symmetry note with suppliers

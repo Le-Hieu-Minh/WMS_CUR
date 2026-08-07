@@ -1,0 +1,3468 @@
+{
+  "author": "WMS_Cur",
+  "project": "WMS_Cur",
+  "title": "WMS_Cur Database",
+  "date": "2026-07-28T13:04:56.198Z",
+  "database": "postgresql",
+  "tables": [
+    {
+      "id": 6,
+      "name": "roles",
+      "x": 40,
+      "y": 40,
+      "fields": [
+        {
+          "id": 1,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 2,
+          "name": "name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 3,
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 4,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 5,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "RBAC roles",
+      "indices": [],
+      "uniqueConstraints": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": 13,
+      "name": "permissions",
+      "x": 40,
+      "y": 320,
+      "fields": [
+        {
+          "id": 7,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 8,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 9,
+          "name": "name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 10,
+          "name": "module",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "INDEX",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 11,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 12,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Permission catalog",
+      "indices": [
+        {
+          "name": "permissions_module_idx",
+          "unique": false,
+          "fields": [
+            "module"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": 16,
+      "name": "role_permissions",
+      "x": 320,
+      "y": 180,
+      "fields": [
+        {
+          "id": 14,
+          "name": "role_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 15,
+          "name": "permission_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "M:N role ↔ permission",
+      "indices": [],
+      "uniqueConstraints": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": 29,
+      "name": "users",
+      "x": 600,
+      "y": 40,
+      "fields": [
+        {
+          "id": 17,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 18,
+          "name": "email",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 19,
+          "name": "password_hash",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 20,
+          "name": "full_name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 21,
+          "name": "avatar_url",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 22,
+          "name": "status",
+          "type": "UserStatus",
+          "default": "ACTIVE",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 23,
+          "name": "role_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 24,
+          "name": "failed_login_attempts",
+          "type": "INTEGER",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 25,
+          "name": "locked_until",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 26,
+          "name": "last_login_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 27,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 28,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "System users",
+      "indices": [
+        {
+          "name": "users_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        },
+        {
+          "name": "users_role_id_idx",
+          "unique": false,
+          "fields": [
+            "role_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": 38,
+      "name": "refresh_tokens",
+      "x": 920,
+      "y": 40,
+      "fields": [
+        {
+          "id": 30,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 31,
+          "name": "user_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 32,
+          "name": "token_hash",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 33,
+          "name": "expires_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 34,
+          "name": "revoked_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 35,
+          "name": "ip_address",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 36,
+          "name": "user_agent",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 37,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "JWT refresh tokens",
+      "indices": [
+        {
+          "name": "refresh_tokens_user_id_idx",
+          "unique": false,
+          "fields": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "refresh_tokens_expires_at_idx",
+          "unique": false,
+          "fields": [
+            "expires_at"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": 49,
+      "name": "warehouses",
+      "x": 40,
+      "y": 620,
+      "fields": [
+        {
+          "id": 39,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 40,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 41,
+          "name": "name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 42,
+          "name": "address",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 43,
+          "name": "phone",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 44,
+          "name": "email",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 45,
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 46,
+          "name": "status",
+          "type": "EntityStatus",
+          "default": "ACTIVE",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 47,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 48,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Warehouses",
+      "indices": [
+        {
+          "name": "warehouses_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#2f6f4e"
+    },
+    {
+      "id": 63,
+      "name": "products",
+      "x": 320,
+      "y": 620,
+      "fields": [
+        {
+          "id": 50,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 51,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 52,
+          "name": "name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 53,
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 54,
+          "name": "category",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 55,
+          "name": "unit",
+          "type": "VARCHAR",
+          "default": "pcs",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 56,
+          "name": "price",
+          "type": "DECIMAL",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,2",
+          "values": []
+        },
+        {
+          "id": 57,
+          "name": "cost_price",
+          "type": "DECIMAL",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,2",
+          "values": []
+        },
+        {
+          "id": 58,
+          "name": "min_stock",
+          "type": "INTEGER",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 59,
+          "name": "image_url",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 60,
+          "name": "status",
+          "type": "EntityStatus",
+          "default": "ACTIVE",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 61,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 62,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Products",
+      "indices": [
+        {
+          "name": "products_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        },
+        {
+          "name": "products_category_idx",
+          "unique": false,
+          "fields": [
+            "category"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#2f6f4e"
+    },
+    {
+      "id": 75,
+      "name": "suppliers",
+      "x": 640,
+      "y": 620,
+      "fields": [
+        {
+          "id": 64,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 65,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 66,
+          "name": "name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 67,
+          "name": "contact_person",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 68,
+          "name": "phone",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 69,
+          "name": "email",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 70,
+          "name": "address",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 71,
+          "name": "notes",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 72,
+          "name": "status",
+          "type": "EntityStatus",
+          "default": "ACTIVE",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 73,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 74,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Suppliers",
+      "indices": [
+        {
+          "name": "suppliers_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#2f6f4e"
+    },
+    {
+      "id": 87,
+      "name": "customers",
+      "x": 920,
+      "y": 620,
+      "fields": [
+        {
+          "id": 76,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 77,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 78,
+          "name": "name",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 79,
+          "name": "contact_person",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 80,
+          "name": "phone",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 81,
+          "name": "email",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 82,
+          "name": "address",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 83,
+          "name": "notes",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 84,
+          "name": "status",
+          "type": "EntityStatus",
+          "default": "ACTIVE",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 85,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 86,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Customers",
+      "indices": [
+        {
+          "name": "customers_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#2f6f4e"
+    },
+    {
+      "id": 94,
+      "name": "inventories",
+      "x": 320,
+      "y": 1100,
+      "fields": [
+        {
+          "id": 88,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 89,
+          "name": "warehouse_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 90,
+          "name": "product_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 91,
+          "name": "quantity",
+          "type": "DECIMAL",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,3",
+          "values": []
+        },
+        {
+          "id": 92,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 93,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Stock qty per warehouse+product",
+      "indices": [
+        {
+          "name": "inventories_warehouse_id_idx",
+          "unique": false,
+          "fields": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "name": "inventories_product_id_idx",
+          "unique": false,
+          "fields": [
+            "product_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "inventories_warehouse_id_product_id_key",
+          "fields": [
+            "warehouse_id",
+            "product_id"
+          ]
+        }
+      ],
+      "color": "#8a5a00"
+    },
+    {
+      "id": 107,
+      "name": "goods_receipts",
+      "x": 40,
+      "y": 1450,
+      "fields": [
+        {
+          "id": 95,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 96,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 97,
+          "name": "warehouse_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 98,
+          "name": "supplier_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 99,
+          "name": "status",
+          "type": "DocumentStatus",
+          "default": "DRAFT",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 100,
+          "name": "receipt_date",
+          "type": "DATE",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 101,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 102,
+          "name": "created_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 103,
+          "name": "confirmed_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 104,
+          "name": "confirmed_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 105,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 106,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Inbound documents",
+      "indices": [
+        {
+          "name": "goods_receipts_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        },
+        {
+          "name": "goods_receipts_warehouse_id_idx",
+          "unique": false,
+          "fields": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "name": "goods_receipts_supplier_id_idx",
+          "unique": false,
+          "fields": [
+            "supplier_id"
+          ]
+        },
+        {
+          "name": "goods_receipts_receipt_date_idx",
+          "unique": false,
+          "fields": [
+            "receipt_date"
+          ]
+        },
+        {
+          "name": "goods_receipts_created_by_id_idx",
+          "unique": false,
+          "fields": [
+            "created_by_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#6b3fa0"
+    },
+    {
+      "id": 116,
+      "name": "goods_receipt_items",
+      "x": 360,
+      "y": 1450,
+      "fields": [
+        {
+          "id": 108,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 109,
+          "name": "goods_receipt_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 110,
+          "name": "product_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 111,
+          "name": "quantity",
+          "type": "DECIMAL",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,3",
+          "values": []
+        },
+        {
+          "id": 112,
+          "name": "unit_cost",
+          "type": "DECIMAL",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,2",
+          "values": []
+        },
+        {
+          "id": 113,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 114,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 115,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Inbound line items",
+      "indices": [
+        {
+          "name": "goods_receipt_items_goods_receipt_id_idx",
+          "unique": false,
+          "fields": [
+            "goods_receipt_id"
+          ]
+        },
+        {
+          "name": "goods_receipt_items_product_id_idx",
+          "unique": false,
+          "fields": [
+            "product_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#6b3fa0"
+    },
+    {
+      "id": 129,
+      "name": "goods_issues",
+      "x": 680,
+      "y": 1450,
+      "fields": [
+        {
+          "id": 117,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 118,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 119,
+          "name": "warehouse_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 120,
+          "name": "customer_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 121,
+          "name": "status",
+          "type": "DocumentStatus",
+          "default": "DRAFT",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 122,
+          "name": "issue_date",
+          "type": "DATE",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 123,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 124,
+          "name": "created_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 125,
+          "name": "confirmed_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 126,
+          "name": "confirmed_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 127,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 128,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Outbound documents",
+      "indices": [
+        {
+          "name": "goods_issues_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        },
+        {
+          "name": "goods_issues_warehouse_id_idx",
+          "unique": false,
+          "fields": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "name": "goods_issues_customer_id_idx",
+          "unique": false,
+          "fields": [
+            "customer_id"
+          ]
+        },
+        {
+          "name": "goods_issues_issue_date_idx",
+          "unique": false,
+          "fields": [
+            "issue_date"
+          ]
+        },
+        {
+          "name": "goods_issues_created_by_id_idx",
+          "unique": false,
+          "fields": [
+            "created_by_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#a03f3f"
+    },
+    {
+      "id": 138,
+      "name": "goods_issue_items",
+      "x": 1000,
+      "y": 1450,
+      "fields": [
+        {
+          "id": 130,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 131,
+          "name": "goods_issue_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 132,
+          "name": "product_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 133,
+          "name": "quantity",
+          "type": "DECIMAL",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,3",
+          "values": []
+        },
+        {
+          "id": 134,
+          "name": "unit_price",
+          "type": "DECIMAL",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,2",
+          "values": []
+        },
+        {
+          "id": 135,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 136,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 137,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Outbound line items",
+      "indices": [
+        {
+          "name": "goods_issue_items_goods_issue_id_idx",
+          "unique": false,
+          "fields": [
+            "goods_issue_id"
+          ]
+        },
+        {
+          "name": "goods_issue_items_product_id_idx",
+          "unique": false,
+          "fields": [
+            "product_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#a03f3f"
+    },
+    {
+      "id": 150,
+      "name": "stock_takes",
+      "x": 40,
+      "y": 2050,
+      "fields": [
+        {
+          "id": 139,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 140,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 141,
+          "name": "warehouse_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 142,
+          "name": "status",
+          "type": "DocumentStatus",
+          "default": "DRAFT",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 143,
+          "name": "take_date",
+          "type": "DATE",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 144,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 145,
+          "name": "created_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 146,
+          "name": "confirmed_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 147,
+          "name": "confirmed_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 148,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 149,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Stock take documents",
+      "indices": [
+        {
+          "name": "stock_takes_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        },
+        {
+          "name": "stock_takes_warehouse_id_idx",
+          "unique": false,
+          "fields": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "name": "stock_takes_take_date_idx",
+          "unique": false,
+          "fields": [
+            "take_date"
+          ]
+        },
+        {
+          "name": "stock_takes_created_by_id_idx",
+          "unique": false,
+          "fields": [
+            "created_by_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#3f6ba0"
+    },
+    {
+      "id": 159,
+      "name": "stock_take_items",
+      "x": 360,
+      "y": 2050,
+      "fields": [
+        {
+          "id": 151,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 152,
+          "name": "stock_take_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 153,
+          "name": "product_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 154,
+          "name": "system_qty",
+          "type": "DECIMAL",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,3",
+          "values": []
+        },
+        {
+          "id": 155,
+          "name": "counted_qty",
+          "type": "DECIMAL",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,3",
+          "values": []
+        },
+        {
+          "id": 156,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 157,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 158,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Counted vs system qty",
+      "indices": [
+        {
+          "name": "stock_take_items_stock_take_id_idx",
+          "unique": false,
+          "fields": [
+            "stock_take_id"
+          ]
+        },
+        {
+          "name": "stock_take_items_product_id_idx",
+          "unique": false,
+          "fields": [
+            "product_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "stock_take_items_stock_take_id_product_id_key",
+          "fields": [
+            "stock_take_id",
+            "product_id"
+          ]
+        }
+      ],
+      "color": "#3f6ba0"
+    },
+    {
+      "id": 172,
+      "name": "stock_adjustments",
+      "x": 680,
+      "y": 2050,
+      "fields": [
+        {
+          "id": 160,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 161,
+          "name": "code",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 162,
+          "name": "warehouse_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 163,
+          "name": "status",
+          "type": "DocumentStatus",
+          "default": "DRAFT",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 164,
+          "name": "adjust_date",
+          "type": "DATE",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 165,
+          "name": "reason",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 166,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 167,
+          "name": "created_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 168,
+          "name": "confirmed_by_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 169,
+          "name": "confirmed_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 170,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 171,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Manual stock adjustments",
+      "indices": [
+        {
+          "name": "stock_adjustments_status_idx",
+          "unique": false,
+          "fields": [
+            "status"
+          ]
+        },
+        {
+          "name": "stock_adjustments_warehouse_id_idx",
+          "unique": false,
+          "fields": [
+            "warehouse_id"
+          ]
+        },
+        {
+          "name": "stock_adjustments_adjust_date_idx",
+          "unique": false,
+          "fields": [
+            "adjust_date"
+          ]
+        },
+        {
+          "name": "stock_adjustments_created_by_id_idx",
+          "unique": false,
+          "fields": [
+            "created_by_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#a06b3f"
+    },
+    {
+      "id": 181,
+      "name": "stock_adjustment_items",
+      "x": 1000,
+      "y": 2050,
+      "fields": [
+        {
+          "id": 173,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 174,
+          "name": "stock_adjustment_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 175,
+          "name": "product_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 176,
+          "name": "type",
+          "type": "AdjustmentType",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 177,
+          "name": "quantity",
+          "type": "DECIMAL",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "15,3",
+          "values": []
+        },
+        {
+          "id": 178,
+          "name": "note",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 179,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 180,
+          "name": "updated_at",
+          "type": "TIMESTAMPTZ",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Increase/Decrease lines",
+      "indices": [
+        {
+          "name": "stock_adjustment_items_stock_adjustment_id_idx",
+          "unique": false,
+          "fields": [
+            "stock_adjustment_id"
+          ]
+        },
+        {
+          "name": "stock_adjustment_items_product_id_idx",
+          "unique": false,
+          "fields": [
+            "product_id"
+          ]
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "stock_adjustment_items_stock_adjustment_id_product_id_key",
+          "fields": [
+            "stock_adjustment_id",
+            "product_id"
+          ]
+        }
+      ],
+      "color": "#a06b3f"
+    },
+    {
+      "id": 194,
+      "name": "audit_logs",
+      "x": 1280,
+      "y": 40,
+      "fields": [
+        {
+          "id": 182,
+          "name": "id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 183,
+          "name": "user_id",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 184,
+          "name": "action",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 185,
+          "name": "module",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 186,
+          "name": "entity_type",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 187,
+          "name": "entity_id",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 188,
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 189,
+          "name": "old_data",
+          "type": "JSONB",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 190,
+          "name": "new_data",
+          "type": "JSONB",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 191,
+          "name": "ip_address",
+          "type": "VARCHAR",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 192,
+          "name": "user_agent",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": 193,
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "default": "CURRENT_TIMESTAMP",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "Audit trail",
+      "indices": [
+        {
+          "name": "audit_logs_action_idx",
+          "unique": false,
+          "fields": [
+            "action"
+          ]
+        },
+        {
+          "name": "audit_logs_module_idx",
+          "unique": false,
+          "fields": [
+            "module"
+          ]
+        },
+        {
+          "name": "audit_logs_entity_id_idx",
+          "unique": false,
+          "fields": [
+            "entity_id"
+          ]
+        },
+        {
+          "name": "audit_logs_user_id_idx",
+          "unique": false,
+          "fields": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "audit_logs_created_at_idx",
+          "unique": false,
+          "fields": [
+            "created_at"
+          ]
+        }
+      ],
+      "uniqueConstraints": [],
+      "color": "#5a5a5a"
+    }
+  ],
+  "relationships": [
+    {
+      "id": 195,
+      "name": "fk_role_permissions_role",
+      "startTableId": 16,
+      "startFieldId": 14,
+      "endTableId": 6,
+      "endFieldId": 1,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 196,
+      "name": "fk_role_permissions_permission",
+      "startTableId": 16,
+      "startFieldId": 15,
+      "endTableId": 13,
+      "endFieldId": 7,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 197,
+      "name": "fk_users_role",
+      "startTableId": 29,
+      "startFieldId": 23,
+      "endTableId": 6,
+      "endFieldId": 1,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 198,
+      "name": "fk_refresh_tokens_user",
+      "startTableId": 38,
+      "startFieldId": 31,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 199,
+      "name": "fk_inventories_warehouse",
+      "startTableId": 94,
+      "startFieldId": 89,
+      "endTableId": 49,
+      "endFieldId": 39,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 200,
+      "name": "fk_inventories_product",
+      "startTableId": 94,
+      "startFieldId": 90,
+      "endTableId": 63,
+      "endFieldId": 50,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 201,
+      "name": "fk_goods_receipts_warehouse",
+      "startTableId": 107,
+      "startFieldId": 97,
+      "endTableId": 49,
+      "endFieldId": 39,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 202,
+      "name": "fk_goods_receipts_supplier",
+      "startTableId": 107,
+      "startFieldId": 98,
+      "endTableId": 75,
+      "endFieldId": 64,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 203,
+      "name": "fk_goods_receipts_created_by",
+      "startTableId": 107,
+      "startFieldId": 102,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 204,
+      "name": "fk_goods_receipts_confirmed_by",
+      "startTableId": 107,
+      "startFieldId": 103,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 205,
+      "name": "fk_goods_receipt_items_receipt",
+      "startTableId": 116,
+      "startFieldId": 109,
+      "endTableId": 107,
+      "endFieldId": 95,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 206,
+      "name": "fk_goods_receipt_items_product",
+      "startTableId": 116,
+      "startFieldId": 110,
+      "endTableId": 63,
+      "endFieldId": 50,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 207,
+      "name": "fk_goods_issues_warehouse",
+      "startTableId": 129,
+      "startFieldId": 119,
+      "endTableId": 49,
+      "endFieldId": 39,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 208,
+      "name": "fk_goods_issues_customer",
+      "startTableId": 129,
+      "startFieldId": 120,
+      "endTableId": 87,
+      "endFieldId": 76,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 209,
+      "name": "fk_goods_issues_created_by",
+      "startTableId": 129,
+      "startFieldId": 124,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 210,
+      "name": "fk_goods_issues_confirmed_by",
+      "startTableId": 129,
+      "startFieldId": 125,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 211,
+      "name": "fk_goods_issue_items_issue",
+      "startTableId": 138,
+      "startFieldId": 131,
+      "endTableId": 129,
+      "endFieldId": 117,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 212,
+      "name": "fk_goods_issue_items_product",
+      "startTableId": 138,
+      "startFieldId": 132,
+      "endTableId": 63,
+      "endFieldId": 50,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 213,
+      "name": "fk_stock_takes_warehouse",
+      "startTableId": 150,
+      "startFieldId": 141,
+      "endTableId": 49,
+      "endFieldId": 39,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 214,
+      "name": "fk_stock_takes_created_by",
+      "startTableId": 150,
+      "startFieldId": 145,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 215,
+      "name": "fk_stock_takes_confirmed_by",
+      "startTableId": 150,
+      "startFieldId": 146,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 216,
+      "name": "fk_stock_take_items_take",
+      "startTableId": 159,
+      "startFieldId": 152,
+      "endTableId": 150,
+      "endFieldId": 139,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 217,
+      "name": "fk_stock_take_items_product",
+      "startTableId": 159,
+      "startFieldId": 153,
+      "endTableId": 63,
+      "endFieldId": 50,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 218,
+      "name": "fk_stock_adjustments_warehouse",
+      "startTableId": 172,
+      "startFieldId": 162,
+      "endTableId": 49,
+      "endFieldId": 39,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 219,
+      "name": "fk_stock_adjustments_created_by",
+      "startTableId": 172,
+      "startFieldId": 167,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 220,
+      "name": "fk_stock_adjustments_confirmed_by",
+      "startTableId": 172,
+      "startFieldId": 168,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 221,
+      "name": "fk_stock_adjustment_items_adj",
+      "startTableId": 181,
+      "startFieldId": 174,
+      "endTableId": 172,
+      "endFieldId": 160,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade"
+    },
+    {
+      "id": 222,
+      "name": "fk_stock_adjustment_items_product",
+      "startTableId": 181,
+      "startFieldId": 175,
+      "endTableId": 63,
+      "endFieldId": 50,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Restrict"
+    },
+    {
+      "id": 223,
+      "name": "fk_audit_logs_user",
+      "startTableId": 194,
+      "startFieldId": 183,
+      "endTableId": 29,
+      "endFieldId": 17,
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Set null"
+    }
+  ],
+  "notes": [
+    {
+      "id": 224,
+      "x": 1280,
+      "y": 520,
+      "title": "Overview",
+      "content": "19 tables · PostgreSQL · Prisma\n\nAuth → Master → Inventory\nDocuments: GR / GI / StockTake / StockAdjustment\nAudit logs track user actions\n\nSource: backend/prisma/schema.prisma",
+      "color": "#fcf7ac",
+      "height": 180,
+      "width": 260
+    }
+  ],
+  "subjectAreas": [
+    {
+      "id": 225,
+      "name": "Auth / RBAC",
+      "x": 20,
+      "y": 20,
+      "width": 1180,
+      "height": 560,
+      "color": "#175e7a"
+    },
+    {
+      "id": 226,
+      "name": "Master Data",
+      "x": 20,
+      "y": 600,
+      "width": 1180,
+      "height": 460,
+      "color": "#2f6f4e"
+    },
+    {
+      "id": 227,
+      "name": "Inventory",
+      "x": 280,
+      "y": 1080,
+      "width": 360,
+      "height": 320,
+      "color": "#8a5a00"
+    },
+    {
+      "id": 228,
+      "name": "Goods Receipt",
+      "x": 20,
+      "y": 1430,
+      "width": 620,
+      "height": 560,
+      "color": "#6b3fa0"
+    },
+    {
+      "id": 229,
+      "name": "Goods Issue",
+      "x": 660,
+      "y": 1430,
+      "width": 620,
+      "height": 560,
+      "color": "#a03f3f"
+    },
+    {
+      "id": 230,
+      "name": "Stock Take",
+      "x": 20,
+      "y": 2030,
+      "width": 620,
+      "height": 560,
+      "color": "#3f6ba0"
+    },
+    {
+      "id": 231,
+      "name": "Stock Adjustment",
+      "x": 660,
+      "y": 2030,
+      "width": 620,
+      "height": 560,
+      "color": "#a06b3f"
+    },
+    {
+      "id": 232,
+      "name": "Audit",
+      "x": 1260,
+      "y": 20,
+      "width": 320,
+      "height": 480,
+      "color": "#5a5a5a"
+    }
+  ],
+  "enums": [
+    {
+      "name": "UserStatus",
+      "values": [
+        "ACTIVE",
+        "INACTIVE",
+        "LOCKED"
+      ]
+    },
+    {
+      "name": "EntityStatus",
+      "values": [
+        "ACTIVE",
+        "INACTIVE"
+      ]
+    },
+    {
+      "name": "DocumentStatus",
+      "values": [
+        "DRAFT",
+        "CONFIRMED",
+        "CANCELLED"
+      ]
+    },
+    {
+      "name": "AdjustmentType",
+      "values": [
+        "INCREASE",
+        "DECREASE"
+      ]
+    }
+  ]
+}

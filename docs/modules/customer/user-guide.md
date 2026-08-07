@@ -1,21 +1,62 @@
-# Customer – Hướng dẫn người dùng (Admin)
+# Customer – Hướng dẫn người dùng
 
-## Quản lý khách hàng
+## Overview
 
-1. Menu → **Khách hàng**  
-2. Tìm theo mã, tên hoặc SĐT  
+Hướng dẫn quản lý **Khách hàng** trên WMS.
 
-## Thêm khách hàng
+## Purpose
 
-**Thêm mới** → mã (CUS-001), tên, người liên hệ, thông tin liên lạc → **Lưu**.
+Hướng dẫn nghiệp vụ CRUD KH qua giao diện.
 
-## Sửa / Vô hiệu hóa
+## Scope
 
-- **Sửa:** biểu tượng bút  
-- **Ngừng giao dịch:** thùng rác → xác nhận  
+Trang `/customers`
 
-Khách hàng **Ngừng** không dùng trên phiếu xuất mới (Sprint 2).
+## Workflow
 
-## Gợi ý
+1. Menu **Khách hàng**
+2. **Thêm mới:** Mã KH + Tên (bắt buộc), thông tin liên hệ
+3. **Sửa:** icon bút
+4. **Ngừng:** icon thùng rác → xác nhận
 
-Thống nhất mã KH với hệ thống bán hàng (nếu có) để đối soát dễ hơn.
+KH Hoạt động dùng khi tạo **Phiếu xuất**.
+
+## Business Rules
+
+Mã không trùng · không xóa hẳn · KH Ngừng không phiếu xuất mới
+
+## Technical Design
+
+[frontend.md](./frontend.md)
+
+## API / Database
+
+Không áp dụng (UI)
+
+## Validation
+
+Mã + tên bắt buộc; email hợp lệ nếu có
+
+## Security
+
+customer:create/update/delete
+
+## Error Handling
+
+Mã trùng → đổi mã
+
+## Examples
+
+CUS-001, Công ty Alpha, liên hệ Trần B
+
+## Design Decisions
+
+Giống flow NCC — một lần học dùng cả hai
+
+## Notes
+
+Phiếu xuất cũ vẫn hiển thị KH đã Ngừng
+
+## Checklist
+
+- [x] Steps + goods issue usage

@@ -1,89 +1,75 @@
-# Audit Log – Phân tích 23 mục
+# Audit Log – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Ghi nhận ai làm gì, khi nào, trên thực thể nào — phục vụ kiểm soát và truy vết.
+Phân tích mô hình nhật ký bất biến, nguồn sự kiện và yêu cầu tra cứu.
 
-## 2. Mục tiêu
+## Purpose
 
-- Lưu nhật ký bất biến
-- Admin xem/lọc/search
-- Không làm hỏng nghiệp vụ nếu log fail (try/catch + logger)
+Xác định event nào cần log và payload tối thiểu.
 
-## 3. Nghiệp vụ
+## Scope
 
-| Sự kiện MVP | Module |
-|-------------|--------|
-| LOGIN / LOGOUT / CHANGE_PASSWORD | Auth |
-| USER_CREATE/UPDATE/STATUS | User |
-| GOODS_RECEIPT_CONFIRM | GR |
-| GOODS_ISSUE_CONFIRM | GI |
-| STOCK_TAKE_CONFIRM | ST |
-| STOCK_ADJUSTMENT_CONFIRM | SA |
+Sự kiện confirm chứng từ, auth (login, logout, change password). Không log mọi GET.
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| AL-01 | Xem danh sách nhật ký | Must |
-| AL-02 | Lọc theo module/action/user/ngày | Must |
-| AL-03 | Xem chi tiết old/new JSON | Should |
-| AL-04 | Không cho xóa nhật ký | Must |
-
-## 5–7. Flow
-
-User thao tác → Service thành công → `auditService.log(...)` → ghi DB (async hoặc sync trong cùng request; MVP: sync sau success).
-
-## 8. Business Rules
-
-| ID | Rule |
-|----|------|
-| BR-AL01 | Append-only |
-| BR-AL02 | Không lưu password / token |
-| BR-AL03 | Log fail không rollback nghiệp vụ chính |
-| BR-AL04 | Giữ tối thiểu action + module + entityId + userId + createdAt |
-
-## 9. Validation (list query)
-
-page, limit, module, action, userId, dateFrom, dateTo, search
-
-## 10. Exception
-
-401/403; không có DELETE API
-
-## 11. Permission
-
-`audit-log:read` (chỉ Admin trong seed khuyến nghị; Manager có thể không có)
-
-**Khuyến nghị seed:** Admin = all; Manager = không `audit-log:*` và không `user:*`/`role:*` (giữ như hiện tại + không thêm audit cho Manager). Staff không có.
-
-## 12–13. DB / API
-
-Xem database.md, api.md
-
-## 14. Frontend
-
-Bật menu Nhật ký; table + filters + drawer chi tiết JSON.
-
-## 15. Backend
-
-```
-modules/audit-log/
-  auditLog.route|controller|service|repository|validation
-utils/audit.js hoặc services/audit.service.js
+```mermaid
+sequenceDiagram
+    participant S as stockTakeService
+    participant A as auditService
+    participant DB as audit_logs
+    S->>S: confirm transaction OK
+    S->>A: log STOCK_TAKE_CONFIRM
+    A->>A: sanitize newData
+    A->>DB: insert
+    Note over A,DB: Lỗi ghi không ảnh hưởng confirm
 ```
 
-## 16. AC
+## Business Rules
 
-- Confirm GR ghi 1 log
-- Login ghi log (không password)
-- Không API xóa
-- Filter hoạt động
+| Module | Actions (ví dụ) |
+|--------|-----------------|
+| auth | LOGIN, LOGOUT, CHANGE_PASSWORD |
+| goods-receipt | GOODS_RECEIPT_CONFIRM |
+| goods-issue | GOODS_ISSUE_CONFIRM |
+| stock-take | STOCK_TAKE_CONFIRM |
+| stock-adjustment | STOCK_ADJUSTMENT_CONFIRM |
 
-## 17. Testing
+## Technical Design
 
-Unit: sanitize payload; Integration: list + permission; không test mọi hook ngay (ưu tiên confirm + login)
+Flat table + JSON columns. Index module, action, userId, createdAt, entityId.
 
-## 18–23. Docs / Guides
+## API / Database
 
-Instrument dần theo module khi code ST/SA; backfill hook GR/GI/Auth trong cùng PR Audit hoặc PR riêng.
+Bảng `audit_logs` — xem database.md.
+
+## Validation
+
+Search OR description, entityId, action (case insensitive contains).
+
+## Security
+
+Read restricted. Payload redaction before persist.
+
+## Error Handling
+
+Silent fail on write with error log.
+
+## Examples
+
+newData: `{ code, warehouseId }` — không dump full items.
+
+## Design Decisions
+
+Không partition theo tháng trong MVP — có thể thêm sau khi volume lớn.
+
+## Notes
+
+ipAddress, userAgent optional — pass from controller meta khi có.
+
+## Checklist
+
+- [x] Event inventory per module
+- [x] Redaction list
+- [ ] Retention policy doc

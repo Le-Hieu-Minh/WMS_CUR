@@ -1,128 +1,101 @@
-# Stock Take – Phân tích 23 mục
+# Stock Take – Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Module kiểm kê đối chiếu tồn hệ thống với số đếm thực tế tại kho, ghi nhận chênh lệch và cập nhật tồn khi xác nhận.
+Phân tích yêu cầu và mô hình dữ liệu cho module Kiểm kê (Stock Take), bổ sung cho GR/GI bằng cách đối chiếu tồn sổ sách với tồn thực tế.
 
-## 2. Mục tiêu
+## Purpose
 
-- Tạo phiếu kiểm kê theo kho
-- Nhập số lượng thực tế từng sản phẩm
-- Xem variance trước khi xác nhận
-- Confirm → cập nhật `inventories.quantity = countedQty`
+Xác định actor, luồng nghiệp vụ, quy tắc chênh lệch và điểm tích hợp với `inventories` trước khi triển khai.
 
-## 3. Phân tích nghiệp vụ
+## Scope
 
-| Tác vụ | Mô tả |
-|--------|--------|
-| Tạo DRAFT | Chọn kho, ngày, danh sách SP (từ tồn hiện có hoặc chọn thêm) |
-| Snapshot | Lưu `systemQty` tại thời điểm lưu nháp |
-| Nhập countedQty | User nhập số đếm |
-| Confirm | Transaction set tồn theo countedQty |
-| Cancel/Delete | Chỉ DRAFT |
+| Actor | Hành động |
+|-------|-----------|
+| Staff | Xem danh sách, chi tiết (nếu có quyền read) |
+| Manager/Admin | Tạo, sửa, xác nhận, hủy, xóa phiếu nháp |
+| Hệ thống | Sinh mã, snapshot tồn, cập nhật inventory khi confirm |
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
-| ST-01 | Tạo phiếu kiểm kê theo kho | Must |
-| ST-02 | Hệ thống điền tồn hệ thống làm systemQty | Must |
-| ST-03 | Nhập số đếm thực tế | Must |
-| ST-04 | Xem chênh lệch | Must |
-| ST-05 | Xác nhận → cập nhật tồn | Must |
-| ST-06 | Hủy/xóa phiếu nháp | Must |
-| ST-07 | Không sửa phiếu đã xác nhận | Must |
-
-## 5. Use Case
-
-- UC-ST-Create, UC-ST-UpdateDraft, UC-ST-Confirm, UC-ST-Cancel, UC-ST-Delete, UC-ST-List/Detail
-
-## 6. User Flow
-
-```
-/stock-takes → Tạo → chọn kho → load items từ tồn
-→ nhập countedQty → Lưu nháp → Xác nhận → tồn cập nhật
+```mermaid
+flowchart TD
+    A[Chọn kho ACTIVE] --> B[Tải SP + system_qty]
+    B --> C[Nhập counted_qty từng dòng]
+    C --> D{Lưu DRAFT}
+    D --> E{Confirm?}
+    E -->|Có| F[Transaction: setStock counted_qty]
+    F --> G[CONFIRMED + Audit log]
+    E -->|Không| H[Cancel hoặc sửa tiếp]
 ```
 
-## 7. Activity Flow
+## Business Rules
 
-Confirm: lock phiếu DRAFT → for each item: upsert inventory quantity = countedQty → status CONFIRMED.
+| ID | Mô tả | Nguồn kiểm tra |
+|----|-------|----------------|
+| BR-ST-01 | Phiếu CONFIRMED/CANCELLED không sửa được | `assertDraft()` |
+| BR-ST-02 | Mỗi SP một dòng duy nhất | Service + DB unique |
+| BR-ST-03 | SP ngừng hoạt động không confirm | Loop items trước setStock |
+| BR-ST-04 | Tồn mới = counted_qty (không cộng variance) | `setStock()` |
+| BR-ST-05 | SP chưa có tồn → system_qty = 0 | `buildItemsWithSnapshot` |
 
-## 8. Business Rules
+## Technical Design
 
-| ID | Rule |
-|----|------|
-| BR-ST01 | 1 phiếu / 1 warehouse |
-| BR-ST02 | ≥ 1 item; countedQty ≥ 0 |
-| BR-ST03 | Không trùng product trong phiếu |
-| BR-ST04 | Warehouse ACTIVE |
-| BR-ST05 | Confirm trong transaction |
-| BR-ST06 | systemQty snapshot lúc save draft (refresh khi update draft) |
-| BR-ST07 | CONFIRMED không sửa/xóa/hủy |
+| Thành phần | Trách nhiệm |
+|------------|-------------|
+| `buildItemsWithSnapshot` | Đọc inventory, gán system_qty |
+| `mapItem` | Tính variance cho response |
+| `generateCode` | ST-YYYYMMDD-#### |
+| `inventoryRepository.setStock` | Upsert/update quantity |
 
-## 9. Validation
+Quan hệ: `StockTake` 1—N `StockTakeItem`; FK `warehouse`, `product`, `createdBy`, `confirmedBy`.
 
-- warehouseId UUID, takeDate date, items[].productId, countedQty ≥ 0
-- note optional max 1000
+## API / Database
 
-## 10. Exception
+Bảng `stock_takes`, `stock_take_items`. Enum `DocumentStatus`: DRAFT, CONFIRMED, CANCELLED. Chi tiết: [database.md](./database.md), [api.md](./api.md).
 
-404 không tìm thấy · 400 validation · 409 không phải DRAFT · 403 forbidden · 401
+## Validation
 
-## 11. Permission Matrix
+| Input | Ràng buộc |
+|-------|-----------|
+| countedQty | ≥ 0, bắt buộc |
+| takeDate | Chuỗi ngày parse được |
+| items | Min 1 phần tử |
+| note | Max 1000 (header), 500 (dòng) |
 
-| API | Permission |
-|-----|------------|
-| GET list/detail | stock-take:read |
-| POST create | stock-take:create |
-| PUT / cancel / confirm | stock-take:update |
-| DELETE | stock-take:delete |
+## Security
 
-## 12. Database Design
+Phân quyền theo CRUD + confirm thuộc `update`. Không expose endpoint ghi trực tiếp inventory.
 
-Xem [database.md](./database.md)
+## Error Handling
 
-## 13. API Design
+Conflict khi confirm phiếu đã xử lý; bad request khi dữ liệu master không ACTIVE.
 
-Xem [api.md](./api.md)
+## Examples
 
-## 14. Frontend Design
+| system_qty | counted_qty | variance | Tồn sau confirm |
+|------------|-------------|----------|-----------------|
+| 100 | 100 | 0 | 100 |
+| 100 | 88 | -12 | 88 |
+| 0 | 5 | +5 | 5 |
 
-- List: search/filter status/warehouse, StatusBadge
-- Dialog/Page form: warehouse, date, table items (systemQty readonly, countedQty input, variance)
-- Actions: Confirm / Cancel / Delete (DRAFT)
-- Empty/Loading/Error states
+## Design Decisions
 
-## 15. Backend Design
+| # | Quyết định | Thay thế đã bỏ |
+|---|------------|----------------|
+| 1 | Document pattern giống GR/GI | Phiếu kiểm kê không trạng thái riêng |
+| 2 | Variance chỉ read-only | Cho phép client gửi variance |
+| 3 | Confirm toàn bộ phiếu | Confirm từng dòng riêng lẻ |
 
-```
-modules/stock-take/
-  stockTake.route|controller|service|repository|validation
-```
+## Notes
 
-Reuse `inventoryRepository` + thêm `setStock(warehouseId, productId, qty, tx)`.
+- `getWarehouseProducts` trả SP có tồn > 0 hoặc tất cả inventory tại kho (filter ACTIVE).
+- Cập nhật phiếu DRAFT xóa và tạo lại toàn bộ items (replace strategy).
 
-## 16. Acceptance Criteria
+## Checklist
 
-- Tạo nháp có systemQty đúng
-- Confirm cập nhật tồn = countedQty
-- CONFIRMED không sửa được
-- Variance hiển thị đúng trên UI
-
-## 17. Testing Strategy
-
-Unit: variance, confirm set stock, assert DRAFT  
-Integration: CRUD + confirm + 409  
-FE: schema validation
-
-## 18–21. Documentation
-
-API / DB / FE / BE docs trong thư mục module.
-
-## 22. User Guide
-
-Admin/Manager tạo phiếu → nhập số đếm → xác nhận.
-
-## 23. Developer Guide
-
-Triển khai sau Inventory; thêm `setStock`; seed permissions; đăng ký route + sidebar.
+- [x] Xác định BR system vs counted
+- [x] Map state machine
+- [x] Xác định điểm chạm inventory
+- [x] Liên kết audit + report
+- [ ] UAT kịch bản kiểm kê cuối tháng

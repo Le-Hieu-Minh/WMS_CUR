@@ -1,32 +1,71 @@
-# Product – Backend Design
+# Product – Backend
 
-## Cấu trúc
+## Overview
 
-```
-backend/src/modules/product/
-├── product.route.js
-├── product.controller.js
-├── product.service.js
-├── product.repository.js
-└── product.validation.js
-```
+Backend module product — layered CRUD với xử lý Decimal, filter category và search mở rộng.
 
-## Service methods
+## Purpose
 
-| Method | Mô tả |
-|--------|--------|
-| `list` | Search code/name/category, filter status/category, mapProduct |
-| `getById` | mapProduct |
-| `create` | normalize code, defaults unit/price/minStock |
-| `update` | partial update |
-| `changeStatus` | ACTIVE/INACTIVE |
-| `softDelete` | → INACTIVE |
+Hướng dẫn developer vị trí logic nghiệp vụ và điểm tích hợp với phiếu kho.
 
-## Helpers
+## Scope
 
-- `mapProduct` — Decimal → Number cho JSON  
-- `normalizeCode`, `assertCodeUnique`, `buildWhere`  
+`backend/src/modules/product/*`
 
-## Route
+## Workflow
 
-Giống pattern warehouse: GET, GET/:id, POST, PUT, PATCH /status, DELETE.
+Request → auth → validate → controller → service (mapProduct, assertCodeUnique) → repository → Prisma.
+
+## Business Rules
+
+| Function | Logic |
+|----------|-------|
+| mapProduct | price, costPrice → Number |
+| normalizeCode | UPPERCASE |
+| buildWhere | search OR code/name/category; category equals |
+| create defaults | unit pcs, prices 0, minStock 0, ACTIVE |
+| softDelete | INACTIVE |
+
+## Technical Design
+
+Mount: `/products` in routes/index.js
+
+Pagination default sort createdAt desc; sortBy includes price.
+
+## API / Database
+
+[api.md](./api.md) · [database.md](./database.md)
+
+## Validation
+
+product.validation.js — imageUrl z.string().url() on create/update.
+
+## Security
+
+product:read|create|update|delete on routes.
+
+## Error Handling
+
+ApiError 404/409; asyncHandler in controller.
+
+## Examples
+
+Module goods-receipt loads products by ids — rejects if count mismatch or INACTIVE.
+
+## Design Decisions
+
+| Decision | Trade-off |
+|----------|-----------|
+| mapProduct on read | Consistent JSON numbers |
+| Partial PUT | Flexible updates |
+| No audit log | Simpler master data |
+
+## Notes
+
+Prisma returns Decimal objects — always map before JSON response.
+
+## Checklist
+
+- [x] Layer map documented
+- [x] Decimal handling noted
+- [ ] product.service unit tests

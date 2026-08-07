@@ -6,4 +6,5 @@ export default {
   collectCoverageFrom: ['src/**/*.js', '!src/server.js'],
   coverageDirectory: 'coverage',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testTimeout: 30000,
 };

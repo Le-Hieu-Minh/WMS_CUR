@@ -1,23 +1,62 @@
-# Supplier – Frontend Design
+# Supplier – Frontend
 
-## Route
+## Overview
 
-`/suppliers` → SuppliersPage (`supplier:read`)
+UI NCC tại `/suppliers` — SuppliersPage + MasterDataListPage + supplierApi/supplierSchema.
 
-## Config MasterDataListPage
+## Purpose
 
-- **Fields:** code, name, contactPerson, phone, email, address, notes  
-- **Columns:** Mã, Tên, Liên hệ, Điện thoại  
-- **API:** supplierApi · **Schema:** supplierSchema  
-- **Permissions:** supplier:create|update|delete  
+Document UI config và UX cho module supplier.
 
-## Structure
+## Scope
 
-```
-frontend/src/features/suppliers/pages/SuppliersPage.jsx
-frontend/src/features/master-data/...
-```
+SuppliersPage only. Receipt supplier picker: goods-receipt module.
 
-## Query key
+## Workflow
 
-`['suppliers', { page, search, status }]`
+Same as warehouse master data list pattern.
+
+## Business Rules
+
+Delete button ACTIVE only · permissions supplier:* · empty strings → null
+
+## Technical Design
+
+| File | Content |
+|------|---------|
+| `features/suppliers/pages/SuppliersPage.jsx` | Page |
+| Fields | code, name, contactPerson, phone, email, address, notes |
+| Columns | code, name, contactPerson, phone |
+
+## API / Database
+
+[api.md](./api.md) · [database.md](./database.md) · client: supplierApi
+
+## Validation
+
+supplierSchema — code/name required; email optional or empty.
+
+## Security
+
+usePermissions supplier:create/update/delete
+
+## Error Handling
+
+Standard MasterDataListPage error display.
+
+## Examples
+
+Placeholder code SUP-001, name Công ty ABC.
+
+## Design Decisions
+
+Shared component with CustomersPage — differ only labels/placeholders.
+
+## Notes
+
+Cross-ref [customer/frontend.md](../customer/frontend.md) for identical behavior.
+
+## Checklist
+
+- [x] Fields match SuppliersPage.jsx
+- [x] Cross-ref customer

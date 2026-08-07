@@ -20,7 +20,7 @@ import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Pagination } from '@/components/shared/Pagination';
 import { usePermissions } from '@/hooks/usePermissions';
 import { roleApi } from '@/features/roles/api/roleApi';
-import { createRoleSchema, updateRoleSchema } from '@/features/roles/schemas/roleSchema';
+import { roleFormSchema } from '@/features/roles/schemas/roleSchema';
 
 function getErrorMessage(error) {
   return error?.response?.data?.message || 'Có lỗi xảy ra';
@@ -54,19 +54,18 @@ export default function RolesPage() {
     enabled: dialogOpen,
   });
 
-  const schema = editingRole ? updateRoleSchema : createRoleSchema;
-
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(roleFormSchema),
+    defaultValues: { name: '', description: '' },
   });
 
   const createMutation = useMutation({
-    mutationFn: roleApi.create,
+    mutationFn: (payload) => roleApi.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       closeDialog();
@@ -91,17 +90,20 @@ export default function RolesPage() {
     },
   });
 
+  const isSaving = createMutation.isPending || updateMutation.isPending;
+
   const closeDialog = () => {
     setDialogOpen(false);
     setEditingRole(null);
     setSelectedPermissions([]);
     setFormError('');
-    reset({});
+    reset({ name: '', description: '' });
   };
 
   const openCreate = () => {
     setEditingRole(null);
     setSelectedPermissions([]);
+    setFormError('');
     reset({ name: '', description: '' });
     setDialogOpen(true);
   };
@@ -109,11 +111,13 @@ export default function RolesPage() {
   const openEdit = (role) => {
     setEditingRole(role);
     setSelectedPermissions(role.permissions.map((p) => p.id));
+    setFormError('');
     reset({ name: role.name, description: role.description || '' });
     setDialogOpen(true);
   };
 
   const togglePermission = (id) => {
+    setFormError('');
     setSelectedPermissions((prev) =>
       prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
     );
@@ -121,15 +125,17 @@ export default function RolesPage() {
 
   const onSubmit = (values) => {
     setFormError('');
-    const payload = {
-      ...values,
-      permissionIds: selectedPermissions,
-    };
 
     if (selectedPermissions.length === 0) {
       setFormError('Chọn ít nhất 1 quyền');
       return;
     }
+
+    const payload = {
+      name: values.name,
+      description: values.description?.trim() ? values.description.trim() : null,
+      permissionIds: selectedPermissions,
+    };
 
     if (editingRole) {
       updateMutation.mutate({ id: editingRole.id, payload });
@@ -245,6 +251,11 @@ export default function RolesPage() {
             <div className="space-y-2">
               <Label>Quyền hạn</Label>
               <div className="max-h-48 space-y-3 overflow-y-auto rounded-md border p-3">
+                {permissionsQuery.isLoading && (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  </div>
+                )}
                 {permissionsQuery.data &&
                   Object.entries(permissionsQuery.data).map(([module, perms]) => (
                     <div key={module}>
@@ -267,18 +278,21 @@ export default function RolesPage() {
                     </div>
                   ))}
               </div>
+              {formError === 'Chọn ít nhất 1 quyền' && (
+                <p className="text-sm text-destructive">{formError}</p>
+              )}
             </div>
-            {formError && (
+            {formError && formError !== 'Chọn ít nhất 1 quyền' && (
               <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 {formError}
               </div>
             )}
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={closeDialog}>
+              <Button type="button" variant="outline" onClick={closeDialog} disabled={isSaving}>
                 Hủy
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Đang lưu...' : 'Lưu'}
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? 'Đang lưu...' : 'Lưu'}
               </Button>
             </DialogFooter>
           </form>

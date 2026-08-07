@@ -1,30 +1,109 @@
-# User – Phân tích nghiệp vụ (tổng hợp 23 mục)
+# User — Phân tích nghiệp vụ
 
-## 1. Giới thiệu
+## Overview
 
-Quản lý vòng đời tài khoản nội bộ: tạo, xem, cập nhật, vô hiệu hóa, mở khóa, reset mật khẩu, gán role.
+Phân tích nghiệp vụ quản lý người dùng nội bộ: vòng đời tài khoản từ tạo đến vô hiệu hóa, gán role, xử lý lock và reset mật khẩu.
 
-## 2. Mục tiêu
+## Purpose
 
-- Admin quản lý user và gán đúng role  
-- Soft deactivate, unlock LOCKED, reset password  
-- Phân quyền `user:*`  
-- Không CRUD Role (thuộc Module Role & Permission)  
+Định nghĩa actor, use case, business rules và acceptance criteria cho module User trước/sau triển khai.
 
-## 3. Nghiệp vụ
+## Scope
 
-| Tác vụ | Actor |
-|--------|-------|
-| List / Search / Filter | Admin |
-| Create / Update | Admin |
-| Change status / Unlock | Admin |
-| Reset password | Admin |
-| Soft delete | Admin |
+| Bao gồm | Loại trừ |
+|---------|----------|
+| CRUD user, status, unlock, reset password | CRUD role/permission |
+| User stories USR-01 → USR-10 | Chi tiết API → [api.md](./api.md) |
+| Bảo vệ Admin cuối cùng, self-action | Public registration |
 
-## 4. User Story
+## Workflow
 
-| ID | Story | P |
-|----|-------|---|
+### Luồng chính (Admin)
+
+```mermaid
+flowchart LR
+    A[Vào /users] --> B[Lọc / tìm kiếm]
+    B --> C{Tác vụ}
+    C --> D[Tạo user]
+    C --> E[Sửa profile/role]
+    C --> F[Đổi status]
+    C --> G[Mở khóa LOCKED]
+    C --> H[Reset password]
+    C --> I[Soft delete]
+```
+
+### Create user
+
+1. Validate payload (email, password policy, roleId)
+2. Kiểm tra email chưa tồn tại
+3. Verify roleId tồn tại
+4. bcrypt hash password → insert `users` status ACTIVE
+5. Trả 201 (không có passwordHash)
+
+### Deactivate / soft delete
+
+1. Kiểm tra không phải self
+2. Nếu Admin ACTIVE → kiểm tra còn Admin khác
+3. Set status INACTIVE
+4. `authRepository.revokeAllUserTokens(userId)`
+
+## Business Rules
+
+| ID | Rule | Chi tiết |
+|----|------|----------|
+| BR-U01 | Permission `user:*` | Mọi endpoint qua `authorize()` |
+| BR-U02 | Email unique, lowercase | Transform lowercase khi create |
+| BR-U03 | Password policy | Shared `passwordPolicy` — ≥8, hoa, thường, số |
+| BR-U04 | Không trả passwordHash | `mapUser()` |
+| BR-U05 | Cấm self deactivate/delete | So sánh `id === actorId` |
+| BR-U06 | Bảo vệ last Admin ACTIVE | `countActiveAdmins` exclude self |
+| BR-U07 | Soft delete = INACTIVE + revoke | Delegate `changeStatus(INACTIVE)` |
+| BR-U08 | Unlock reset lock fields | status ACTIVE, attempts=0, lockedUntil=null |
+| BR-U09 | Reset password revoke all | Sau update passwordHash |
+| BR-U10 | Chỉ gán roleId có sẵn | `assertRoleExists` |
+| BR-U11 | Không sửa email | MVP — không field email trong update |
+
+## Technical Design
+
+Service: `userService` — business rules. Repository: Prisma queries. Reuse Auth: `authRepository.revokeAllUserTokens`. Chi tiết: [backend.md](./backend.md).
+
+## API / Database
+
+Không áp dụng chi tiết — [api.md](./api.md), [database.md](./database.md).
+
+## Validation
+
+| Schema | Fields |
+|--------|--------|
+| listUsersSchema | page, limit (max 100), search, status, roleId, sortBy, sortOrder |
+| createUserSchema | email, fullName (2–255), password, roleId, avatarUrl? |
+| updateUserSchema | fullName?, roleId?, avatarUrl? |
+| changeUserStatusSchema | status: ACTIVE \| INACTIVE |
+| resetPasswordSchema | newPassword, confirmPassword (match) |
+| userIdSchema | params.id UUID |
+
+## Security
+
+- Manager/Staff không có `user:*` → 403
+- Reset password không yêu cầu biết MK cũ (Admin privilege)
+- Revoke tokens ngay khi deactivate/reset
+
+## Error Handling
+
+| Case | HTTP |
+|------|------|
+| Email trùng | 409 |
+| Last admin violation | 409 |
+| Self deactivate/delete | 400 |
+| User/role not found | 404 / 400 |
+| Missing permission | 403 |
+
+## Examples
+
+### User Stories
+
+| ID | Story | Priority |
+|----|-------|----------|
 | USR-01 | Xem danh sách (search/filter/page) | Must |
 | USR-02 | Tạo tài khoản | Must |
 | USR-03 | Xem chi tiết | Must |
@@ -36,74 +115,31 @@ Quản lý vòng đời tài khoản nội bộ: tạo, xem, cập nhật, vô h
 | USR-09 | Không đụng Admin cuối cùng | Must |
 | USR-10 | Manager/Staff không truy cập | Must |
 
-## 5. Use Case
+### Acceptance Criteria
 
-- UC-List, UC-Create, UC-Update, UC-Status/Unlock, UC-ResetPassword, UC-SoftDelete  
+- CRUD + filter hoạt động
+- Create → user login được
+- Deactivate → login 403
+- Unlock/reset đúng side-effect
+- Self/last-admin protected
+- Không leak passwordHash
 
-## 6–7. Flow
+## Design Decisions
 
-Admin → `/users` (cần `user:read`) → Table + filters → Create Dialog / Detail → Update | Status | Unlock | Reset | Soft delete  
+| Decision | Reason | Advantages | Trade-offs |
+|----------|--------|------------|------------|
+| Soft delete only | FK integrity | Giữ audit/transactions | "Delete" gây hiểu nhầm |
+| Unlock separate endpoint | Rõ nghiệp vụ | Admin action explicit | Thêm API |
+| List includes LOCKED filter | Ops visibility | Tìm user bị lock | UI cần badge LOCKED |
 
-Create: validate → check email → hash password → insert → 201  
+## Notes
 
-## 8. Business Rules
+Audit log cho user actions có thể bổ sung Sprint sau. Role options: `GET /users/meta/roles` — không duplicate Role CRUD.
 
-| ID | Rule |
-|----|------|
-| BR-U01 | Chỉ có `user:*` mới thao tác |
-| BR-U02 | Email unique, lowercase |
-| BR-U03 | Password policy giống Auth |
-| BR-U04 | Không trả passwordHash |
-| BR-U05 | Cấm self deactivate/delete |
-| BR-U06 | Bảo vệ last Admin ACTIVE |
-| BR-U07 | Soft delete = INACTIVE + revoke tokens |
-| BR-U08 | Unlock reset attempts + lockedUntil |
-| BR-U09 | Reset password → revoke all tokens |
-| BR-U10 | Chỉ gán roleId có sẵn |
-| BR-U11 | Không sửa email (MVP) |
+## Checklist
 
-## 9. Validation
-
-- Create: email, fullName (2–255), password policy, roleId UUID  
-- Update: fullName, roleId, avatarUrl optional  
-- Status: ACTIVE \| INACTIVE  
-- Reset: newPassword + confirm  
-- List query: page, limit, search, status, roleId, sortBy, sortOrder  
-
-## 10. Exception
-
-400 validation / self · 401 · 403 · 404 · 409 email/last-admin · 500  
-
-## 11. Permission Matrix
-
-| Endpoint | Permission |
-|----------|------------|
-| GET list/detail | user:read |
-| POST create | user:create |
-| PUT / PATCH status / unlock / reset | user:update |
-| DELETE soft | user:delete |
-
-## 12–15. Design
-
-Xem [database.md](./database.md), [api.md](./api.md), [frontend.md](./frontend.md), [backend.md](./backend.md).
-
-## 16. Acceptance Criteria
-
-- CRUD + filter OK  
-- Create → login được  
-- Email trùng 409  
-- Deactivate → không login  
-- Unlock / reset password đúng side-effect  
-- Self / last-admin được bảo vệ  
-- Manager/Staff → 403  
-- Không leak passwordHash  
-
-## 17. Testing Strategy
-
-Unit: service rules + validation  
-Integration: mỗi endpoint Success/400/401/403/404/409  
-FE: schemas + hooks helpers  
-
-## 18–23. Docs
-
-Đã tách thành các file trong thư mục này (API, DB, FE, BE, User Guide, Developer Guide).
+- [x] User stories USR-01 → USR-10
+- [x] Business rules BR-U01 → BR-U11
+- [x] Flow diagrams
+- [x] Validation table
+- [x] Cross-ref API/DB/FE/BE

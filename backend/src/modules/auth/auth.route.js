@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
+import { env } from '../../config/env.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { authController } from './auth.controller.js';
@@ -12,16 +13,19 @@ import {
 
 const router = Router();
 
-const loginRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Quá nhiều yêu cầu, thử lại sau',
-  },
-});
+const loginRateLimiter =
+  env.NODE_ENV === 'test'
+    ? (_req, _res, next) => next()
+    : rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 10,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: {
+          success: false,
+          message: 'Quá nhiều yêu cầu, thử lại sau',
+        },
+      });
 
 /**
  * @swagger

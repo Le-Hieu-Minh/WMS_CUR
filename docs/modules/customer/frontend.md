@@ -1,27 +1,64 @@
-# Customer – Frontend Design
+# Customer – Frontend
 
-## Route
+## Overview
 
-`/customers` → CustomersPage (`customer:read`)
+UI khách hàng `/customers` — CustomersPage configures MasterDataListPage.
 
-## Config MasterDataListPage
+## Purpose
 
-- **Fields:** code, name, contactPerson, phone, email, address, notes  
-- **Columns:** Mã, Tên, Liên hệ, Điện thoại  
-- **API:** customerApi · **Schema:** customerSchema  
-- **Permissions:** customer:create|update|delete  
+Frontend structure and UX for customer module.
 
-## Structure
+## Scope
 
-```
-frontend/src/features/customers/pages/CustomersPage.jsx
-frontend/src/features/master-data/...
-```
+CustomersPage. Customer picker on goods-issue: separate module.
 
-## Query key
+## Workflow
 
-`['customers', { page, search, status }]`
+List → search/filter → dialog CRUD → confirm soft delete.
 
-## HomePage stats
+## Business Rules
 
-`statsApi.getCounts()` gọi pagination total của products, warehouses, suppliers, customers.
+Delete ACTIVE only · customer:* permissions · CUS-001 placeholder
+
+## Technical Design
+
+| Item | Value |
+|------|-------|
+| Page | `features/customers/pages/CustomersPage.jsx` |
+| API | customerApi |
+| Schema | customerSchema |
+| Fields | code, name, contactPerson, phone, email, address, notes |
+| Columns | code, name, contactPerson, phone |
+
+## API / Database
+
+[api.md](./api.md) · [database.md](./database.md)
+
+## Validation
+
+customerSchema — same rules as supplierSchema
+
+## Security
+
+usePermissions
+
+## Error Handling
+
+MasterDataListPage standard
+
+## Examples
+
+CUS-001 / Công ty Alpha
+
+## Design Decisions
+
+Identical to [supplier/frontend.md](../supplier/frontend.md) with KH labels.
+
+## Notes
+
+queryKey `customers`
+
+## Checklist
+
+- [x] Match CustomersPage.jsx
+- [x] Cross-ref supplier
