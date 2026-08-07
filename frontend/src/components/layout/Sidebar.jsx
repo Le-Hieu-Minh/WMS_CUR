@@ -38,7 +38,7 @@ const navItems = [
   { label: 'Người dùng', icon: UserCircle, path: '/users', permission: 'user:read' },
   { label: 'Phân quyền', icon: Shield, path: '/roles', permission: 'role:read' },
   { label: 'Nhật ký', icon: ClipboardList, path: '/audit-logs', permission: 'audit-log:read' },
-  { label: 'Cài đặt', icon: Settings, path: '/settings', permission: null, disabled: true },
+  { label: 'Cài đặt', icon: Settings, path: '/settings' },
 ];
 
 export function Sidebar({ collapsed, onToggle }) {
@@ -46,7 +46,6 @@ export function Sidebar({ collapsed, onToggle }) {
   const { hasPermission } = usePermissions();
 
   const visibleItems = navItems.filter((item) => {
-    if (item.disabled) return true;
     if (!item.permission) return true;
     return hasPermission(item.permission);
   });

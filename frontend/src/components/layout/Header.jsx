@@ -24,7 +24,7 @@ export function Header() {
         </div>
       )}
       <Button variant="ghost" size="sm" asChild>
-        <Link to="/change-password">Đổi MK</Link>
+        <Link to="/settings">Cài đặt</Link>
       </Button>
       <Button variant="ghost" size="icon" onClick={handleLogout} disabled={isLoggingOut}>
         <LogOut className="h-4 w-4" />

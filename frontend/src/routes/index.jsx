@@ -18,6 +18,7 @@ import StockTakesPage from '@/features/stock-takes/pages/StockTakesPage';
 import StockAdjustmentsPage from '@/features/stock-adjustments/pages/StockAdjustmentsPage';
 import AuditLogsPage from '@/features/audit-logs/pages/AuditLogsPage';
 import ReportsPage from '@/features/reports/pages/ReportsPage';
+import SettingsPage from '@/features/settings/pages/SettingsPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> },
           { path: 'change-password', element: <ChangePasswordPage /> },
+          { path: 'settings', element: <SettingsPage /> },
           {
             element: <PermissionRoute permission="user:read" />,
             children: [{ path: 'users', element: <UsersPage /> }],
